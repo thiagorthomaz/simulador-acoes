@@ -24,11 +24,11 @@ class ImportadorCotacoes {
     */
    private $conexao_db;
    
-   public function __construct(\stphp\Database\Connection $db_conn) {
+   public function __construct(\stphp\Database\Connection $db_conn, $ano) {
      
       $this->path = "./";
       $this->conexao_db = $db_conn;
-      $this->logfile_handle = fopen("./log/log_erros.txt", "a");
+      $this->logfile_handle = fopen("../log/log_erros_" . $ano . ".txt", "a");
       
    }
 

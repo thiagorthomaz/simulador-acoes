@@ -9,17 +9,26 @@ namespace app\controller;
  */
 class Importador extends \stphp\Controller {
   
-  public function teste(){
+  public function importarBase(){
     
     ini_set('memory_limit', '1024M'); 
     
     
     $dao = new \app\model\PrecoDAO();
     
-    $filename = "COTAHIST_A2015.TXT";
-    $imp_cotacoes = new \app\model\ImportadorCotacoes($dao);
-    $imp_cotacoes->setPath("/var/www/html/simulador-acoes/cotahist/");
-    $imp_cotacoes->importaArquivo($filename);
+    $anos = array('2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015');
+    
+    
+    foreach ($anos as $ano){
+      echo "\nIniciado a importação do ano de " . $ano;
+      $filename = "COTAHIST_A" . $ano . ".TXT";
+      $imp_cotacoes = new \app\model\ImportadorCotacoes($dao, $ano);
+      $imp_cotacoes->setPath("/var/www/html/simulador-acoes/cotahist/");
+      $imp_cotacoes->importaArquivo($filename);  
+      echo "\nFinalizado a importação do ano de " . $ano;
+    }
+    
+    echo "-------------- CONCLUÍDO! -------------------";
     exit;
   }
   
