@@ -1,7 +1,7 @@
 <?php
 
 $core_path = "/var/www/html/stphp";
-$app_path = "/var/www/html/acoes";
+$app_path = "/var/www/html/simulador-acoes";
 
 ini_set('display_errors', 'On');
 error_reporting(E_ALL);

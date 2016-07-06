@@ -43,10 +43,8 @@ class ImportadorCotacoes {
     */
    public function gravaDados($dados) {
      
-      $rs = $this->conexao_db->sendQuery(
-              "INSERT INTO Tab_preco (" .
-              "  DATA_PREGAO, COD_ATIVO, ABERTURA, MAXIMA, MINIMA, MEDIO, FECHAMENTO, NEGOCIOS, VOLUME_FINANCEIRO, DATA_IMPORTACAO) " .
-              "VALUES (?,?,?,?,?,?,?,?,?,?)", $dados);
+     $sql = "INSERT INTO Tab_preco (data_pregao, cod_ativo, abertura, maxima, minima, medio, fechamento, negocios, volume_financeiro, data_importacao) VALUE ('2015-01-02','AAPL34',29.65,29.65,29.45,29.61,29.45,2,956435,'2016-07-05 20:34:45')";
+      $rs = $this->conexao_db->sendQuery($sql, $dados);
 
       if (!is_null($rs->getError_code())) {
         $msg = $rs->getError_message();
