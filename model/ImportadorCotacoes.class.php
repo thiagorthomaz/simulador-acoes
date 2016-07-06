@@ -43,13 +43,12 @@ class ImportadorCotacoes {
     */
    public function gravaDados($dados) {
      
-     $sql = "INSERT INTO Tab_preco (data_pregao, cod_ativo, abertura, maxima, minima, medio, fechamento, negocios, volume_financeiro, data_importacao) VALUE ('2015-01-02','AAPL34',29.65,29.65,29.45,29.61,29.45,2,956435,'2016-07-05 20:34:45')";
+     $sql = "INSERT INTO Tab_preco (data_pregao, cod_ativo, abertura, maxima, minima, medio, fechamento, negocios, volume_financeiro, data_importacao) "
+         . "VALUE (:data_pregao, :cod_ativo, :abertura, :maxima, :minima, :medio, :fechamento, :negocios, :volume_financeiro, :data_importacao)";
       $rs = $this->conexao_db->sendQuery($sql, $dados);
 
       if (!is_null($rs->getError_code())) {
         $msg = $rs->getError_message();
-        print_r($dados);
-        echo $msg;exit;
          throw new \Exception($msg);
       }
    }
@@ -195,7 +194,7 @@ class ImportadorCotacoes {
          $campos['negocios'] = intval(substr($linha, 147, 5));
 
          //Posição 171 a 188 - Volume financeiro
-         $campos['volume_financ'] = floatval(substr($linha, 170, 18)) / 100;
+         $campos['volume_financeiro'] = floatval(substr($linha, 170, 18)) / 100;
 
          //Data do atual processamento.
          $campos['data_importacao'] = date("Y-m-d H:i:s");
