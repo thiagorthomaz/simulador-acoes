@@ -10,3 +10,9 @@ create table Tab_preco (
   volume_financeiro integer,
   data_importacao datetime
 );
+
+create table Tab_hist_provento (
+  cod_ativo char(5),
+  data date,
+  descricao varchar(100)
+);
