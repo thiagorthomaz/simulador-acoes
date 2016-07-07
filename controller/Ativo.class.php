@@ -23,8 +23,12 @@ class Ativo extends \stphp\Controller {
     
     $ifr->simular($dados);
     $resultado = $ifr->getresultado();
-    print_r($resultado);
-    exit;
+    //print_r($resultado);
+    
+    $resposta = new \app\view\RespostaJson();
+    $resposta->addArray($resultado);
+    return $resposta;
+
   }
   
 }
