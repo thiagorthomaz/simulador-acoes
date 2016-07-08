@@ -1,0 +1,38 @@
+<h1>IFR</h1>
+
+<label>Valor investido<input class="form-control" ng-model="valor_investido"></label>
+<table class="table table-bordered"> 
+  <thead> 
+    <tr>
+      <th>Compra</th> 
+      <th>Fechamento</th> 
+      <th>Lotes</th> 
+      <th>R$ Gastos</th> 
+      <th>R$ Disponível</th> 
+      <th>Venda</th> 
+      <th>Fechamento</th> 
+      <th>Lotes</th> 
+      <th>Vendido</th> 
+      <th>Realizado</th> 
+      <th>Saldo</th> 
+      <th>% Lucro</th> 
+    </tr> 
+  </thead> 
+  <tbody> 
+    <tr ng-repeat="acao in acoes_simuladas"> 
+      <td  class="active">{{acao.trade.compra.data_pregao}}</td>
+      <td class="active">{{acao.trade.compra.fechamento}}</td>
+      <td class="active">{{ valor_investido / acao.trade.compra.fechamento | number:0}}</td>
+      <td class="active">R$ 0</td>
+      <td class="active">R$ 0</td>
+      <td  class="danger">{{acao.trade.venda.data_pregao}}</td>
+      <td class="danger">{{acao.trade.venda.fechamento}}</td>
+      <td class="danger">R$ 0</td>
+      <td class="danger">R$ 0</td>
+      <td class="info">R$ 0</td>
+      <td class="info">R$ 0</td>
+      <td class="info">0%</td>
+    </tr>
+  </tbody> 
+</table>
+

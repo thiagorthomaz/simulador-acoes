@@ -36,10 +36,10 @@ class IFR {
         $venda = $this->venda($preco);
         
         if ($compra){
-          $this->trades[$index_trade]['compra'] = $compra;
+          $this->trades[$index_trade]['trade']['compra'] = $compra;
         }
         if ($venda){
-          $this->trades[$index_trade]['venda'] = $venda;
+          $this->trades[$index_trade]['trade']['venda'] = $venda;
           $index_trade++;
         }
         
