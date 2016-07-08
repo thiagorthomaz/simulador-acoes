@@ -17,16 +17,27 @@ class Ativo extends \stphp\Controller {
   
   public function simularIFR(){
     
-    $dados = $this->getAtivo("ABEV3");
+    //$dados = $this->getAtivo("ABEV3");
+    //$dados = $this->getAtivo("LAME4");
+    $dados = $this->getAtivo("LAME4");
     
-    $ifr = new \app\setup\IFR(30, 80);
-    
-    $ifr->simular($dados);
-    $resultado = $ifr->getresultado();
-    //print_r($resultado);
-    
+    $ifr = new \app\setup\SetupIFR(30, 80);
+    $simulador = new \app\simulador\Simulador($ifr);
+    $simulador->backTest($dados);
+    $resultado = $simulador->getResultados();
+
     $resposta = new \app\view\RespostaJson();
-    $resposta->addArray($resultado);
+    
+    foreach ($resultado as $trade) {
+      //print_r($trade->prototipoConverter());
+      $resposta->addContent($trade, true);
+      
+    }
+    
+    
+    
+    
+    //$resposta->addArray($resultado);
     return $resposta;
 
   }

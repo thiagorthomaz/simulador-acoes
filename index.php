@@ -23,6 +23,7 @@ stphp\config\AutoLoad::addNamespace("app\\view", $app_path . "/view");
 stphp\config\AutoLoad::addNamespace("app\\exception", $app_path . "/exception" );
 stphp\config\AutoLoad::addNamespace("app\\estudos", $app_path . "/estudos" );
 stphp\config\AutoLoad::addNamespace("app\\setup", $app_path . "/setup" );
+stphp\config\AutoLoad::addNamespace("app\\simulador", $app_path . "/simulador" );
 
 stphp\STPHP::registerExtensions();
 stphp\STPHP::registerAutoload();

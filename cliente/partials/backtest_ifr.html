@@ -20,17 +20,17 @@
   </thead> 
   <tbody> 
     <tr ng-repeat="acao in acoes_simuladas"> 
-      <td  class="active">{{acao.trade.compra.data_pregao}}</td>
-      <td class="active">{{acao.trade.compra.fechamento}}</td>
-      <td class="active">{{ valor_investido / acao.trade.compra.fechamento | number:0}}</td>
-      <td class="active">R$ 0</td>
-      <td class="active">R$ 0</td>
-      <td  class="danger">{{acao.trade.venda.data_pregao}}</td>
-      <td class="danger">{{acao.trade.venda.fechamento}}</td>
-      <td class="danger">R$ 0</td>
-      <td class="danger">R$ 0</td>
-      <td class="info">R$ 0</td>
-      <td class="info">R$ 0</td>
+      <td  class="active">{{acao.trade.compra.data_pregao | date:'dd/MM/yyyy' }}</td>
+      <td class="active">{{acao.trade.compra.fechamento | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
+      <td class="active">{{ calcularLotes(valor_investido, acao.trade.compra.fechamento) }}</td>
+      <td class="active">{{ calcularLotes(valor_investido, acao.trade.compra.fechamento) * acao.trade.compra.fechamento | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
+      <td class="active">{{ valor_investido - (calcularLotes(valor_investido, acao.trade.compra.fechamento) * acao.trade.compra.fechamento) | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
+      <td  class="danger">{{acao.trade.venda.data_pregao | date:'dd/MM/yyyy' }}</td>
+      <td class="active">{{acao.trade.venda.fechamento | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
+      <td class="active">{{ calcularLotes(valor_investido, acao.trade.venda.fechamento) }}</td>
+      <td class="active">{{ calcularLotes(valor_investido, acao.trade.venda.fechamento) * acao.trade.venda.fechamento | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
+      <td class="info">{{(calcularLotes(valor_investido, acao.trade.venda.fechamento) * acao.trade.venda.fechamento) - (calcularLotes(valor_investido, acao.trade.compra.fechamento) * acao.trade.compra.fechamento) | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
+      <td class="info">{{  }}</td>
       <td class="info">0%</td>
     </tr>
   </tbody> 

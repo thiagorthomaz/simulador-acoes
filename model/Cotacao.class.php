@@ -1,13 +1,15 @@
 <?php
 
+namespace app\model;
+
 /**
- * Description of Preco
+ * Description of Cotacao
  *
  * @author thiago
  */
-class Preco {
+class Cotacao {
 
-  private $DATA_PREGA;
+  private $DATA_PREGAO;
   private $COD_ATIVO;
   private $ABERTURA;
   private $MAXIMA;
@@ -18,8 +20,8 @@ class Preco {
   private $VOLUME_FINANCEIRO;
   private $DATA_IMPORTACAO;
 
-  function getDATA_PREGA() {
-    return $this->DATA_PREGA;
+  function getDATA_PREGAO() {
+    return $this->DATA_PREGAO;
   }
 
   function getCOD_ATIVO() {
@@ -58,8 +60,8 @@ class Preco {
     return $this->DATA_IMPORTACAO;
   }
 
-  function setDATA_PREGA($DATA_PREGA) {
-    $this->DATA_PREGA = $DATA_PREGA;
+  function setDATA_PREGAO($DATA_PREGAO) {
+    $this->DATA_PREGAO = $DATA_PREGAO;
   }
 
   function setCOD_ATIVO($COD_ATIVO) {

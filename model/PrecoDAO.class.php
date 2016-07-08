@@ -24,6 +24,8 @@ class PrecoDAO extends \app\model\DAO {
     
     $sql = "select * from " . $this->getTable();
     $sql .= $this->where($params);
+    $sql .= " order by data_pregao desc";
+
     $rs = $this->sendQuery($sql, $params);
     return $rs->getResultSet();
     
