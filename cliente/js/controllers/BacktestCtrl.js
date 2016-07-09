@@ -1,20 +1,22 @@
-app.controller("BacktestIFRCtrl", function ($scope, AcoesAPI, $filter) {
-  
-  $scope.valor_investido = 3000;
-  
-  AcoesAPI.simularIFR().success(function(r){
-     console.log(r.conteudo.Trade[0]);
-    $scope.acoes_simuladas = r.conteudo.Trade;
+app.controller("BacktestIFRCtrl", function ($scope, AcoesAPI, $stateParams) {
+
+  var cod_ativo = $stateParams.cod_ativo;
+  simularAtivo(cod_ativo);
+  $scope.cod_ativo = cod_ativo;
+  $scope.cod_ativo_selecionado = {"cod_ativo":cod_ativo};
+  function simularAtivo(cod_ativo){
+      AcoesAPI.simularIFR(cod_ativo).success(function(r){
+        $scope.acoes_simuladas = r.conteudo.Trade;
+      });
+  };
+
+  AcoesAPI.listaCodigosAtivos().success(function(r){
+    $scope.lista_codigos_ativos = r.conteudo;
   });
   
-  $scope.calcularLotes = function(valor_investido, fechamento){
-    var qtde_lotes = valor_investido / fechamento;
-    var qtde_lotes_inteiros = $filter('Floor')(qtde_lotes,100);  
-    return qtde_lotes_inteiros;
-  };
-  
-  $scope.calcularValorCompra = function(qtde_lotes, fechamento){
-    $scope.valor_compra = qtde_lotes * fechamento;
+  $scope.simularAtivo = function(ativo){
+    simularAtivo(ativo.cod_ativo);
+    $scope.cod_ativo = ativo.cod_ativo;
   };
   
 });

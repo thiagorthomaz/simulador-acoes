@@ -31,6 +31,11 @@ class PrecoDAO extends \app\model\DAO {
     
   }
   
+  public function listarAtivos(){
+    $sql = "select distinct cod_ativo from Tab_preco";
+    $rs = $this->sendQuery($sql);
+    return $rs->getResultSet();
+  }
   
   public function modeltoArray(\stphp\Database\iDataModel $data_model) {
     

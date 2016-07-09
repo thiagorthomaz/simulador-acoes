@@ -1,4 +1,10 @@
-<h1>IFR</h1>
+<h1>IFR - {{cod_ativo_selecionado.cod_ativo}}</h1>
+
+
+<label>Selecione a ação: 
+    <select ng-change="simularAtivo(cod_ativo_selecionado)" ng-options="item as item.cod_ativo for item in lista_codigos_ativos track by item.cod_ativo" ng-model="cod_ativo_selecionado">
+    </select>
+</label>
 
 <table class="table table-bordered"> 
   <thead> 
@@ -6,15 +12,15 @@
       <th>Compra</th> 
       <th>Fechamento</th> 
       <th>Lotes</th> 
-      <th>R$ Gastos</th> 
-      <th>R$ Disponível</th> 
+      <th>Investido</th> 
+      <th>Disponível</th> 
       <th>Venda</th> 
       <th>Fechamento</th> 
       <th>Lotes</th> 
-      <th>Vendido</th> 
+      <th>Recuperado</th> 
       <th>Realizado</th> 
       <th>Saldo</th> 
-      <th>% Lucro</th> 
+      <th>Rentabilidade</th> 
     </tr> 
   </thead> 
   <tbody> 
@@ -25,7 +31,7 @@
       <td class="active">{{acao.cotacao_compra.fechamento | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
       <td class="active">{{ acao.lotes_comprados }}</td>
       <td class="active">{{ acao.investido | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
-      <td class="active">{{ acao.carteira.saldo | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
+      <td class="active">{{ acao.carteira.saldo - acao.investido | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
       
       <td  class="danger">{{acao.cotacao_venda.data_pregao | date:'dd/MM/yyyy' }}</td>
       <td class="danger">{{ acao.cotacao_venda.fechamento | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>

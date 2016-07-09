@@ -15,11 +15,16 @@ class Ativo extends \stphp\Controller {
   }
   
   
+  /**
+   * index.php?Ativo.simularIFR&cod_ativo=ABEV3
+   * 
+   * @return \app\view\RespostaJson
+   */
   public function simularIFR(){
-    
-    //$dados = $this->getAtivo("ABEV3");
+    $request = $this->getRequest();
+    $cod_ativo = $request->getParams("cod_ativo");
+    $dados = $this->getAtivo($cod_ativo);
     //$dados = $this->getAtivo("LAME4");
-    $dados = $this->getAtivo("LAME4");
     
     $carteira = new \app\model\Carteira();
     
@@ -40,6 +45,17 @@ class Ativo extends \stphp\Controller {
     //$resposta->addArray($resultado);
     return $resposta;
 
+  }
+  
+  public function listaCodigosAtivos(){
+
+    $preco_dao = new \app\model\PrecoDAO();
+    $lista_ativos = $preco_dao->listarAtivos();
+    
+    $resposta = new \app\view\RespostaJson();
+    $resposta->addArray($lista_ativos);
+    return $resposta;
+    
   }
   
 }
