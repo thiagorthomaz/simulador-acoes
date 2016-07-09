@@ -3,7 +3,8 @@ app.controller("BacktestIFRCtrl", function ($scope, AcoesAPI, $filter) {
   $scope.valor_investido = 3000;
   
   AcoesAPI.simularIFR().success(function(r){
-    $scope.acoes_simuladas = r.conteudo;
+     console.log(r.conteudo.Trade[0]);
+    $scope.acoes_simuladas = r.conteudo.Trade;
   });
   
   $scope.calcularLotes = function(valor_investido, fechamento){

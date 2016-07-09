@@ -21,17 +21,17 @@ class Ativo extends \stphp\Controller {
     //$dados = $this->getAtivo("LAME4");
     $dados = $this->getAtivo("LAME4");
     
+    $carteira = new \app\model\Carteira();
+    
     $ifr = new \app\setup\SetupIFR(30, 80);
-    $simulador = new \app\simulador\Simulador($ifr);
+    $simulador = new \app\simulador\Simulador($ifr, $carteira);
     $simulador->backTest($dados);
     $resultado = $simulador->getResultados();
 
     $resposta = new \app\view\RespostaJson();
     
     foreach ($resultado as $trade) {
-      //print_r($trade->prototipoConverter());
       $resposta->addContent($trade, true);
-      
     }
     
     

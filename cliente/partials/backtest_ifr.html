@@ -1,6 +1,5 @@
 <h1>IFR</h1>
 
-<label>Valor investido<input class="form-control" ng-model="valor_investido"></label>
 <table class="table table-bordered"> 
   <thead> 
     <tr>
@@ -19,19 +18,24 @@
     </tr> 
   </thead> 
   <tbody> 
-    <tr ng-repeat="acao in acoes_simuladas"> 
-      <td  class="active">{{acao.trade.compra.data_pregao | date:'dd/MM/yyyy' }}</td>
-      <td class="active">{{acao.trade.compra.fechamento | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
-      <td class="active">{{ calcularLotes(valor_investido, acao.trade.compra.fechamento) }}</td>
-      <td class="active">{{ calcularLotes(valor_investido, acao.trade.compra.fechamento) * acao.trade.compra.fechamento | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
-      <td class="active">{{ valor_investido - (calcularLotes(valor_investido, acao.trade.compra.fechamento) * acao.trade.compra.fechamento) | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
-      <td  class="danger">{{acao.trade.venda.data_pregao | date:'dd/MM/yyyy' }}</td>
-      <td class="active">{{acao.trade.venda.fechamento | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
-      <td class="active">{{ calcularLotes(valor_investido, acao.trade.venda.fechamento) }}</td>
-      <td class="active">{{ calcularLotes(valor_investido, acao.trade.venda.fechamento) * acao.trade.venda.fechamento | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
-      <td class="info">{{(calcularLotes(valor_investido, acao.trade.venda.fechamento) * acao.trade.venda.fechamento) - (calcularLotes(valor_investido, acao.trade.compra.fechamento) * acao.trade.compra.fechamento) | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
-      <td class="info">{{  }}</td>
-      <td class="info">0%</td>
+
+    <tr ng-repeat="acao in acoes_simuladas | orderBy : '-cotacao_compra.data_pregao'"> 
+        
+      <td  class="active">{{acao.cotacao_compra.data_pregao | date:'dd/MM/yyyy' }}</td>
+      <td class="active">{{acao.cotacao_compra.fechamento | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
+      <td class="active">{{ acao.lotes_comprados }}</td>
+      <td class="active">{{ acao.investido | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
+      <td class="active">{{ acao.carteira.saldo | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
+      
+      <td  class="danger">{{acao.cotacao_venda.data_pregao | date:'dd/MM/yyyy' }}</td>
+      <td class="danger">{{ acao.cotacao_venda.fechamento | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
+      <td class="danger">{{ acao.lotes_vendidos }}</td>
+      <td class="danger">{{ acao.retorno | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
+
+      <td class="info">{{ acao.realizado | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
+      <td class="info">{{ acao.carteira.saldo | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
+      <td class="info">{{ acao.rentabilidade | number:2 }}%</td>
+      
     </tr>
   </tbody> 
 </table>

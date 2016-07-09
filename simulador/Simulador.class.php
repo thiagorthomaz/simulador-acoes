@@ -9,10 +9,21 @@ namespace app\simulador;
  */
 class Simulador {
 
+  /**
+   *
+   * @var \app\setup\iSetup
+   */
   protected $setup;
   protected $trades = array();
-  function __construct(\app\setup\iSetup $setup) {
+  /**
+   *
+   * @var \app\model\Carteira
+   */
+  protected $carteira;
+          
+  function __construct(\app\setup\iSetup $setup, \app\model\Carteira $carteira) {
     $this->setup = $setup;
+    $this->carteira = $carteira;
   }
 
   
@@ -35,25 +46,32 @@ class Simulador {
           $comprar = $this->setup->avaliarCompra($cotacao);
           if ($comprar){
             $this->setup->comprar();
-            $trade = new \app\model\Trade();
-            $trade->setCotacao_compra($cotacao);
             
+            $trade = new \app\model\Trade($this->carteira);
+            $trade->setCotacao_compra($cotacao);
+            $trade->comprarLotes();
+
           }
         } else {
           
           $vender = $this->setup->avaliarvenda($cotacao);  
           
           if ($vender) {
-            $trade->setCotacao_venda($cotacao);
             $this->setup->vender();
+            $trade->setCotacao_venda($cotacao);
+            $trade->venderLotes();
             $this->trades[] = $trade;
+            $this->carteira = $trade->getCarteira();
+
             $trade = null;
           }          
         }
 
       }
     }
-
+    
+    //print_r($this->trades[0]);
+    
   }
   
   public function getResultados(){
