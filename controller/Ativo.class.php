@@ -26,7 +26,7 @@ class Ativo extends \stphp\Controller {
     $dados = $this->getAtivo($cod_ativo);
     //$dados = $this->getAtivo("LAME4");
     
-    $carteira = new \app\model\Carteira();
+    $carteira = new \app\model\Carteira(4000);
     
     $ifr = new \app\setup\SetupIFR(30, 80);
     $simulador = new \app\simulador\Simulador($ifr, $carteira);
@@ -38,11 +38,7 @@ class Ativo extends \stphp\Controller {
     foreach ($resultado as $trade) {
       $resposta->addContent($trade, true);
     }
-    
-    
-    
-    
-    //$resposta->addArray($resultado);
+
     return $resposta;
 
   }

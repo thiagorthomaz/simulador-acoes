@@ -9,18 +9,11 @@ namespace app\model;
  */
 class Trade implements \stphp\ArraySerializable{
 
-  private $cotacao_compra;
-  private $cotacao_venda;
-  
-  private $lotes_comprados;
-  private $lotes_vendidos;
-  
-  private $investido;
-  private $retorno;
-  
-  private $realizado;
-  
-  private $rentabilidade;
+  private $cotacao;
+  private $lotes;
+  private $data_operacao;
+  private $valor;
+  private $tipo_trade; //Compra/Venda
 
 
   /**
@@ -32,40 +25,60 @@ class Trade implements \stphp\ArraySerializable{
   public function __construct(\app\model\Carteira $carteira) {
     $this->carteira = clone $carteira;
   } 
+
   
-  function getCotacao_compra() {
-    return $this->cotacao_compra;
+  function getCotacao() {
+    return $this->cotacao;
   }
 
-  function getCotacao_venda() {
-    return $this->cotacao_venda;
-  }
-  
-  function getRentabilidade() {
-    return $this->rentabilidade;
+  function getLotes() {
+    return $this->lotes;
   }
 
-  function setRentabilidade($rentabilidade) {
-    $this->rentabilidade = $rentabilidade;
-  }
-  
-  /**
-   * @TODO usar objeto Cotacao
-   * @param type $cotacao_compra
-   */
-  function setCotacao_compra($cotacao_compra) {
-    $this->cotacao_compra = $cotacao_compra;
+  function getData_operacao() {
+    return $this->data_operacao;
   }
 
-  function setCotacao_venda($cotacao_venda) {
-    $this->cotacao_venda = $cotacao_venda;
+  function getValor() {
+    return $this->valor;
+  }
+
+  function getTipo_trade() {
+    return $this->tipo_trade;
+  }
+
+  function getCarteira() {
+    return $this->carteira;
+  }
+
+  function setCotacao($cotacao) {
+    $this->cotacao = $cotacao;
+  }
+
+  function setLotes($lotes) {
+    $this->lotes = $lotes;
+  }
+
+  function setData_operacao($data_operacao) {
+    $this->data_operacao = $data_operacao;
+  }
+
+  function setValor($valor) {
+    $this->valor = $valor;
+  }
+
+  function setTipo_trade($tipo_trade) {
+    $this->tipo_trade = $tipo_trade;
+  }
+
+  function setCarteira(\app\model\Carteira $carteira) {
+    $this->carteira = $carteira;
   }
   
   public function arraySerialize(){
     //$field_list = get_object_vars($this);
     $field_list = array(
-      'cotacao_compra', 'cotacao_venda', 'lotes_comprados', 'lotes_vendidos',
-      'investido', 'carteira', 'realizado', 'retorno', 'rentabilidade'
+      'cotacao', 'lotes', 'data_operacao', 'valor', 'tipo_trade', 'carteira'
     );
     return $this->toArray($this, $field_list);
     
@@ -83,77 +96,31 @@ class Trade implements \stphp\ArraySerializable{
     }
     return $array;
   }
-
-  function getLotes_comprados() {
-    return $this->lotes_comprados;
-  }
-
-  function getLotes_vendidos() {
-    return $this->lotes_vendidos;
-  }
-
-  function getRealizado() {
-    return $this->realizado;
-  }
-
-  function getInvestido() {
-    return $this->investido;
-  }
-
-  function getCarteira() {
-    return $this->carteira;
-  }
-
-  function getRetorno() {
-    return $this->retorno;
-  }
-
-  function setRetorno($retorno) {
-    $this->retorno = $retorno;
-  }
-  
-  function setInvestido($investido) {
-    $this->investido = $investido;
-  }
-
-  function setCarteira(\app\model\Carteira $carteira) {
-    $this->carteira = $carteira;
-  }
-  
-  function setLotes_comprados($lotes_comprados) {
-    $this->lotes_comprados = $lotes_comprados;
-  }
-
-  function setLotes_vendidos($lotes_vendidos) {
-    $this->lotes_vendidos = $lotes_vendidos;
-  }
-
-  function setRealizado($realizado) {
-    $this->realizado = $realizado;
-  }
   
   function comprarLotes() {
-    $saldo_carteira = $this->carteira->getSaldo();
-    $lotes_comprados = floor(($saldo_carteira / $this->cotacao_compra["fechamento"])/100) *100;
-    $investido = $lotes_comprados * $this->cotacao_compra["fechamento"];
-    $this->setLotes_comprados($lotes_comprados);
-    $this->setInvestido($investido);
-    $this->carteira->debitar($investido);
+    
+    
+    $cotacao = $this->cotacao["fechamento"];
+    $saldo_carteira = $this->carteira->getSaldo();    
+    $lotes_comprados = floor(($saldo_carteira / $cotacao)/100) *100;
+    $this->valor = $lotes_comprados * $this->cotacao["fechamento"];
+
+    $this->setLotes($lotes_comprados);
+    $this->carteira->comprar($lotes_comprados, $cotacao);
   }
   
-  function venderLotes(){
-    $lotes_comprados = $this->getLotes_comprados();
-    $this->setLotes_vendidos($lotes_comprados);
-    $this->retorno = ($lotes_comprados * $this->cotacao_venda["fechamento"]);
-    $realizado = $this->retorno - $this->getInvestido() ;
-    $this->setRealizado($realizado);
-    if ($this->investido <> 0){
-      $this->rentabilidade =  ($realizado / $this->investido) * 100;
+  function venderLotes($lotes_venda_parcial = 0){
+    
+    if ($lotes_venda_parcial === 0){
+      $this->lotes = $this->carteira->getLotes();
     } else {
-      $this->rentabilidade = 0;
+      $this->lotes =$lotes_venda_parcial;
     }
     
-    $this->carteira->creditar( $this->retorno );
+    $cotacao = $this->cotacao["fechamento"];
+    $this->valor = ($this->lotes * $cotacao);     
+    $this->carteira->vender( $this->lotes, $cotacao );
+
   }
   
 }

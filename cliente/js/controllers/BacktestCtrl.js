@@ -6,7 +6,7 @@ app.controller("BacktestIFRCtrl", function ($scope, AcoesAPI, $stateParams) {
   $scope.cod_ativo_selecionado = {"cod_ativo":cod_ativo};
   function simularAtivo(cod_ativo){
       AcoesAPI.simularIFR(cod_ativo).success(function(r){
-        $scope.acoes_simuladas = r.conteudo.Trade;
+        $scope.acoes_simuladas = r.conteudo.Operacao;
       });
   };
 

@@ -10,9 +10,10 @@ namespace app\model;
 class Carteira implements \stphp\ArraySerializable {
 
   private $saldo;
+  private $lotes;
   
-  function __construct() {
-    $this->saldo = 4000;
+  function __construct($valor_inicial) {
+    $this->saldo = $valor_inicial;
   }
 
   
@@ -20,18 +21,37 @@ class Carteira implements \stphp\ArraySerializable {
     return $this->saldo;
   }
 
-  function setSaldo($saldo) {
+  private function setSaldo($saldo) {
     $this->saldo = $saldo;
   }
   
-  function debitar($valor){
+  private function debitar($valor){
     $this->saldo -= $valor;
   }
   
-  function creditar($valor){
+  private function creditar($valor){
     $this->saldo += $valor;
   }
 
+  function getLotes() {
+    return $this->lotes;
+  }
+
+  private function setLotes($lotes) {
+    $this->lotes = $lotes;
+  }
+
+  function vender($lotes, $cotacao){
+    $this->creditar($cotacao*$lotes);
+    $this->lotes -= $lotes;
+    
+  }
+  
+  function comprar($lotes, $cotacao){
+    $this->debitar($cotacao*$lotes);
+    $this->lotes += $lotes;
+  }
+  
   public function arraySerialize(){
     //$field_list = get_object_vars($this);
     $field_list = array(

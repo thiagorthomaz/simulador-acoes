@@ -15,6 +15,7 @@ class Simulador {
    */
   protected $setup;
   protected $trades = array();
+  protected $operacoes = array();
   /**
    *
    * @var \app\model\Carteira
@@ -35,9 +36,9 @@ class Simulador {
     $ifr->calcula($periodo);
     
     $precos_calculados = $ifr->getResultado();
-
-    $trade = null;
-
+    
+    $operacao = null;
+    
     foreach ($precos_calculados as $cotacao) {
       
       if (isset($cotacao['ifr'])) {
@@ -45,12 +46,20 @@ class Simulador {
         if (!$comprado){
           $comprar = $this->setup->avaliarCompra($cotacao);
           if ($comprar){
-            $this->setup->comprar();
             
+            $this->setup->comprar();
             $trade = new \app\model\Trade($this->carteira);
-            $trade->setCotacao_compra($cotacao);
+            $trade->setCotacao($cotacao);
+            $trade->setTipo_trade("Compra");
+            $trade->setData_operacao(date("Y-m-d H:i:s"));
             $trade->comprarLotes();
 
+            $operacao = new \app\model\Operacao();
+            $operacao->setTrade_compra($trade);
+            
+            $this->carteira = $trade->getCarteira();
+            //$this->trades[] = $trade;
+            
           }
         } else {
           
@@ -58,24 +67,34 @@ class Simulador {
           
           if ($vender) {
             $this->setup->vender();
-            $trade->setCotacao_venda($cotacao);
+            
+            $trade = new \app\model\Trade($this->carteira);
+            $trade->setCotacao($cotacao);
+            $trade->setTipo_trade("Venda");
+            $trade->setData_operacao(date("Y-m-d H:i:s"));
             $trade->venderLotes();
-            $this->trades[] = $trade;
             $this->carteira = $trade->getCarteira();
+            //$this->trades[] = $trade;
+            
+            
+            $operacao->setTrade_venda($trade);
+            $operacao->getRealizado();
+            $operacao->getRentabilidade();
+            $this->operacoes[] = $operacao;
 
-            $trade = null;
           }          
         }
 
       }
     }
     
-    //print_r($this->trades[0]);
+    //print_r($this->operacoes);
+    //exit;
     
   }
   
   public function getResultados(){
-    return $this->trades;
+    return $this->operacoes;
   }
   
   

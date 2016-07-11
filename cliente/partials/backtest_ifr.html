@@ -1,48 +1,113 @@
+<!--
 <h1>IFR - {{cod_ativo_selecionado.cod_ativo}}</h1>
-
 
 <label>Selecione a ação: 
     <select ng-change="simularAtivo(cod_ativo_selecionado)" ng-options="item as item.cod_ativo for item in lista_codigos_ativos track by item.cod_ativo" ng-model="cod_ativo_selecionado">
     </select>
 </label>
+-->
+
+
+<div class='container'>
+  
+
+<div class="row">
+  <div class='col-sm-12'>
+    <div class="row">
+      <div class="col-sm-2">Data pregão</div>
+      <div class="col-sm-1">Tipo</div>
+      <div class="col-sm-2">Cotacao</div>
+      <div class="col-sm-1">Lotes</div>
+      <div class="col-sm-1">Valor</div>
+      <div class="col-sm-1">Saldo</div>
+    </div>
+
+    <div class="row" ng-repeat="operacao in acoes_simuladas | orderBy : '-operacao.trade_compra.cotacao.data_pregao'">
+
+      <div class="bg-info row">
+
+        <div class="col-sm-2">{{ operacao.trade_compra.cotacao.data_pregao | date:'dd/MM/yyyy' }}</div>
+        <div class="col-sm-1">{{ operacao.trade_compra.tipo_trade }}</div>
+        <div class="col-sm-2">{{ operacao.trade_compra.cotacao.fechamento | currency:NUMBER_FORMATS.CURRENCY_SYM }}</div>
+        <div class="col-sm-1">{{ operacao.trade_compra.lotes }}</div>
+        <div class="col-sm-1">{{ operacao.trade_compra.valor | currency:NUMBER_FORMATS.CURRENCY_SYM }}</div>
+        <div class="col-sm-1">{{ operacao.trade_compra.carteira.saldo | currency:NUMBER_FORMATS.CURRENCY_SYM }}</div>
+      </div>
+
+      <div class="bg-warning row">
+        <div class="col-sm-2">{{ operacao.trade_venda.cotacao.data_pregao | date:'dd/MM/yyyy' }}</div>
+        <div class="col-sm-1">{{ operacao.trade_venda.tipo_trade }}</div>
+        <div class="col-sm-2">{{ operacao.trade_venda.cotacao.fechamento | currency:NUMBER_FORMATS.CURRENCY_SYM }}</div>
+        <div class="col-sm-1">{{ operacao.trade_venda.lotes }}</div>
+        <div class="col-sm-1">{{ operacao.trade_venda.valor | currency:NUMBER_FORMATS.CURRENCY_SYM }}</div>
+        <div class="col-sm-1">{{ operacao.trade_venda.carteira.saldo | currency:NUMBER_FORMATS.CURRENCY_SYM }}</div>
+      </div>
+      
+      <div class="bg-success row">
+        <strong>Realizado: </strong> 
+        <div class="col-md-offset-3">
+          <span>{{operacao.realizado | currency:NUMBER_FORMATS.CURRENCY_SYM }}</span>  
+          -
+          {{operacao.rentabilidade | number:2 }} <strong>%</strong>
+        </div>
+        
+        
+      </div>
+      
+      <div class='row'>
+        <hr>
+      </div>
+      
+
+    </div>
+  
+  
+  </div>  
+  
+</div>
+
+  </div>
+
+
+<!--
 
 <table class="table table-bordered"> 
   <thead> 
     <tr>
-      <th>Compra</th> 
-      <th>Fechamento</th> 
-      <th>Lotes</th> 
-      <th>Investido</th> 
-      <th>Disponível</th> 
-      <th>Venda</th> 
-      <th>Fechamento</th> 
-      <th>Lotes</th> 
-      <th>Recuperado</th> 
-      <th>Realizado</th> 
-      <th>Saldo</th> 
-      <th>Rentabilidade</th> 
+      <th>Data pregão</th>
+      <th>Data operação</th>
+      <th>Tipo</th>
+      <th>Cotacao</th>
+      <th>Lotes</th>
+      <th>Valor</th>
+      <th>Saldo</th>
     </tr> 
   </thead> 
-  <tbody> 
+  <tbody>
 
-    <tr ng-repeat="acao in acoes_simuladas | orderBy : '-cotacao_compra.data_pregao'"> 
+    
+      <tr ng-repeat="operacao in acoes_simuladas | orderBy : '-operacao.trade_compra.cotacao.data_pregao'" >
+
+        <td  class="active">{{operacao.trade_compra.cotacao.data_pregao | date:'dd/MM/yyyy' }}</td>
+        <td  class="active">{{operacao.trade_compra.data_operacao | date:'dd/MM/yyyy' }}</td>
+        <td  class="active">{{operacao.trade_compra.tipo_trade }}</td>
+        <td class="active">{{operacao.trade_compra.cotacao.fechamento | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
+        <td class="active">{{ operacao.trade_compra.lotes }}</td>
+        <td class="active">{{ operacao.trade_compra.valor | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
+        <td class="active">{{ operacao.trade_compra.carteira.saldo | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
+
+
+        <td class="danger">{{operacao.trade_venda.cotacao.data_pregao | date:'dd/MM/yyyy' }}</td>
+        <td class="danger">{{operacao.trade_venda.data_operacao | date:'dd/MM/yyyy' }}</td>
+        <td class="danger">{{operacao.trade_venda.tipo_trade }}</td>
+        <td class="danger">{{operacao.trade_venda.cotacao.fechamento | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
+        <td class="danger">{{ operacao.trade_venda.lotes }}</td>
+        <td class="danger">{{ operacao.trade_venda.valor | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
+        <td class="danger">{{ operacao.trade_venda.carteira.saldo | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
         
-      <td  class="active">{{acao.cotacao_compra.data_pregao | date:'dd/MM/yyyy' }}</td>
-      <td class="active">{{acao.cotacao_compra.fechamento | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
-      <td class="active">{{ acao.lotes_comprados }}</td>
-      <td class="active">{{ acao.investido | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
-      <td class="active">{{ acao.carteira.saldo - acao.investido | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
-      
-      <td  class="danger">{{acao.cotacao_venda.data_pregao | date:'dd/MM/yyyy' }}</td>
-      <td class="danger">{{ acao.cotacao_venda.fechamento | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
-      <td class="danger">{{ acao.lotes_vendidos }}</td>
-      <td class="danger">{{ acao.retorno | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
-
-      <td class="info">{{ acao.realizado | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
-      <td class="info">{{ acao.carteira.saldo | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
-      <td class="info">{{ acao.rentabilidade | number:2 }}%</td>
-      
-    </tr>
+      </tr>
+    
   </tbody> 
 </table>
 
+-->
