@@ -25,11 +25,11 @@ class Ativo extends \stphp\Controller {
     $cod_ativo = $request->getParams("cod_ativo");
     $dados = $this->getAtivo($cod_ativo);
     //$dados = $this->getAtivo("LAME4");
-    
+
     $carteira = new \app\model\Carteira(4000);
-    
-    $ifr = new \app\setup\SetupIFR(30, 80);
-    $simulador = new \app\simulador\Simulador($ifr, $carteira);
+
+    $setup_ifr = new \app\setup\SetupIFR(30, 80);
+    $simulador = new \app\simulador\Simulador($setup_ifr, $carteira);
     $simulador->backTest($dados);
     $resultado = $simulador->getResultados();
 

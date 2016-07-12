@@ -16,3 +16,7 @@ create table Tab_hist_provento (
   data date,
   descricao varchar(100)
 );
+
+
+update Tab_preco set abertura=abertura/4, maxima=maxima/4, minima=minima/4, medio=medio/4, fechamento=fechamento/4 where cod_ativo = 'PETR4' and data_pregao <= '2005-08-31';
+update Tab_preco set abertura=abertura/2, maxima=maxima/2, minima=minima/2, medio=medio/2, fechamento=fechamento/2 where cod_ativo = 'PETR4' and data_pregao <= '2008-04-25';

@@ -23,6 +23,8 @@ class Operacao implements \stphp\ArraySerializable {
   private $rentabilidade;
   
   private $realizado;
+  
+  private $mms;
 
   
   function getTrade_compra() {
@@ -52,6 +54,14 @@ class Operacao implements \stphp\ArraySerializable {
     return $this->realizado;
   }
 
+  function getMms() {
+    return $this->mms;
+  }
+
+  function setMms($mms) {
+    $this->mms = $mms;
+  }
+  
   function setTrade_compra($trade_compra) {
     $this->trade_compra = $trade_compra;
   }
@@ -62,7 +72,7 @@ class Operacao implements \stphp\ArraySerializable {
 
   public function arraySerialize() {
     $field_list = array(
-      'trade_venda', 'trade_compra', 'rentabilidade', 'realizado'
+      'trade_venda', 'trade_compra', 'rentabilidade', 'realizado', 'mms'
     );
     return $this->toArray($this, $field_list);
     

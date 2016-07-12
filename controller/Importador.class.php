@@ -16,9 +16,8 @@ class Importador extends \stphp\Controller {
     
     $dao = new \app\model\PrecoDAO();
     
-    //$anos = array('2005','2006','2007','2008');
-    $anos = array('2009','2010','2011','2012','2013','2014','2015');
-    
+    //$anos = array('2009','2010','2011','2012','2013','2014','2015');
+    $anos = array('2016');
     
     foreach ($anos as $ano){
       echo "\nIniciado a importação do ano de " . $ano;
@@ -31,6 +30,17 @@ class Importador extends \stphp\Controller {
     
     echo "-------------- CONCLUÍDO! -------------------";
     exit;
+  }
+  
+  
+  //http://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D11072016.ZIP
+  public function importadorDiario(){
+    
+    echo date("dmY");
+    
+    
+    exit;
+    
   }
   
 }

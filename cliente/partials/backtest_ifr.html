@@ -34,7 +34,6 @@
             </div>
 
             <div class="row" ng-repeat="operacao in acoes_simuladas| orderBy : '-trade_compra.cotacao.data_pregao'">
-
                 <div class="bg-info row">
 
                     <div class="col-sm-2">{{ operacao.trade_compra.cotacao.data_pregao | date:'dd/MM/yyyy' }}</div>
@@ -61,6 +60,7 @@
                         ({{operacao.rentabilidade| number:2 }}%)
                     </div>
 
+                    <div class="col-sm-1"><strong>MMS</strong></div><div class="col-sm-1">{{ operacao.mms }}</div>
 
                 </div>
 

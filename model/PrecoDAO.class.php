@@ -32,7 +32,7 @@ class PrecoDAO extends \app\model\DAO {
   }
   
   public function listarAtivos(){
-    $sql = "select distinct cod_ativo from Tab_preco";
+    $sql = "select distinct cod_ativo from Tab_preco where negocios > 25000 order by 1";
     $rs = $this->sendQuery($sql);
     return $rs->getResultSet();
   }

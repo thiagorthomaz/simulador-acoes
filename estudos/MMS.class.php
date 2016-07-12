@@ -36,13 +36,15 @@ class MMS {
         for ($i = 0; $i < count($this->candles); $i++) {
             $this->dados[$i] = 0;
             $soma = 0;
+            $media = 0;
             if ($i + 1 >= $this->periodos) {
                 for ($j = $i; $j >= (($i + 1) - $this->periodos); $j--) {
-                    $soma += $this->candles[$j]->getFechamento();
+                    $soma += $this->candles[$j]["fechamento"];
                 }
                 $media = $soma / $this->periodos;
-                $this->dados[$i] = $media;
             }
+            $this->dados[$i] = $this->candles[$i];
+            $this->dados[$i]["mms"] = $media;
         }
 
     }
