@@ -35,15 +35,20 @@ class Operacao implements \stphp\ArraySerializable {
 
   function getRentabilidade() {
     $valor_compra = $this->trade_compra->getValor();
-    $this->rentabilidade = ($this->realizado / ($valor_compra /100) ) *100;
+    if ($valor_compra == 0) {
+      $this->rentabilidade = 0;
+    } else {
+      $this->rentabilidade = ($this->realizado / ($valor_compra /100) );
+    }
+    
     return $this->rentabilidade;
   }
 
   function getRealizado() {
 
-    $cotacao_compra = $this->trade_compra->getCotacao();
-    $cotacao_venda = $this->trade_venda->getCotacao();
-    $this->realizado = $cotacao_venda['fechamento'] - $cotacao_compra['fechamento'];
+    $cotacao_compra = $this->trade_compra;
+    $cotacao_venda = $this->trade_venda;
+    $this->realizado = $cotacao_venda->getValor() - $cotacao_compra->getValor();
     return $this->realizado;
   }
 

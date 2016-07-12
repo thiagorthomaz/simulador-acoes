@@ -33,7 +33,13 @@ class Ativo extends \stphp\Controller {
     $simulador->backTest($dados);
     $resultado = $simulador->getResultados();
 
+    $carteira_inicial = $simulador->getCarteira_inicial();
+    $carteira_final = $simulador->getCarteira_final();
+    
     $resposta = new \app\view\RespostaJson();
+    
+    $resposta->addArray("carteira_inicial", $carteira_inicial->arraySerialize());
+    $resposta->addArray("carteira_final", $carteira_final->arraySerialize());
     
     foreach ($resultado as $trade) {
       $resposta->addContent($trade, true);
@@ -49,7 +55,7 @@ class Ativo extends \stphp\Controller {
     $lista_ativos = $preco_dao->listarAtivos();
     
     $resposta = new \app\view\RespostaJson();
-    $resposta->addArray($lista_ativos);
+    $resposta->addArray("lista_ativos", $lista_ativos);
     return $resposta;
     
   }

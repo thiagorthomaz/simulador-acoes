@@ -18,12 +18,12 @@ class RespostaJson extends \stphp\http\HttpResponse implements \JsonSerializable
     return json_encode(array("conteudo" => $this->content));
   }
 
-  public function addArray($array){
+  public function addArray($index_name, $array){
     if (!is_array($array)){
       throw new \Exception("Se o conteúdo não for array, você deve usar um objeto que seja ArraySerializable");
     }
     
-    $this->content = $array;
+    $this->content[$index_name] = $array;
     
   }
   

@@ -21,10 +21,21 @@ class Simulador {
    * @var \app\model\Carteira
    */
   protected $carteira;
+  /**
+   *
+   * @var \app\model\Carteira
+   */
+  protected $carteira_inicial;
+  /**
+   *
+   * @var \app\model\Carteira
+   */
+  protected $carteira_final;
           
   function __construct(\app\setup\iSetup $setup, \app\model\Carteira $carteira) {
     $this->setup = $setup;
     $this->carteira = $carteira;
+    $this->carteira_inicial = clone $carteira;
   }
 
   
@@ -56,9 +67,8 @@ class Simulador {
 
             $operacao = new \app\model\Operacao();
             $operacao->setTrade_compra($trade);
-            
+
             $this->carteira = $trade->getCarteira();
-            //$this->trades[] = $trade;
             
           }
         } else {
@@ -74,7 +84,6 @@ class Simulador {
             $trade->setData_operacao(date("Y-m-d H:i:s"));
             $trade->venderLotes();
             $this->carteira = $trade->getCarteira();
-            //$this->trades[] = $trade;
             
             
             $operacao->setTrade_venda($trade);
@@ -87,10 +96,17 @@ class Simulador {
 
       }
     }
-    
-    //print_r($this->operacoes);
-    //exit;
-    
+
+    $this->carteira_final = clone $this->carteira;
+
+  }
+  
+  function getCarteira_inicial() {
+    return $this->carteira_inicial;
+  }
+
+  function getCarteira_final() {
+    return $this->carteira_final;
   }
   
   public function getResultados(){

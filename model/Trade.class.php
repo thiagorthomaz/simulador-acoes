@@ -114,9 +114,9 @@ class Trade implements \stphp\ArraySerializable{
     if ($lotes_venda_parcial === 0){
       $this->lotes = $this->carteira->getLotes();
     } else {
-      $this->lotes =$lotes_venda_parcial;
+      $this->lotes = $lotes_venda_parcial;
     }
-    
+
     $cotacao = $this->cotacao["fechamento"];
     $this->valor = ($this->lotes * $cotacao);     
     $this->carteira->vender( $this->lotes, $cotacao );
