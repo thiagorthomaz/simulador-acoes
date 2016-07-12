@@ -53,7 +53,7 @@ class Ativo extends \stphp\Controller {
 
     $preco_dao = new \app\model\PrecoDAO();
     $lista_ativos = $preco_dao->listarAtivos();
-    
+
     $resposta = new \app\view\RespostaJson();
     $resposta->addArray("lista_ativos", $lista_ativos);
     return $resposta;
