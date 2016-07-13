@@ -17,3 +17,15 @@ create table Tab_hist_provento (
   data date,
   descricao varchar(100)
 );
+
+create table Tab_feriados (
+  data date,
+  dia_semana varchar(100),
+  descricao varchar(100)
+);
+
+create table Tab_hist_importacao (
+  arquivo varchar(20),
+  importado boolean,
+  date date
+);

@@ -32,14 +32,82 @@ class Importador extends \stphp\Controller {
     exit;
   }
 
+  function finalDesemana($data) {
+    echo $data;
+    $dia_semana = date('w', strtotime($data));
+    echo $dia_semana . "<br>";
+    return ($dia_semana == 0 || $dia_semana == 6);
+  }
   
+  function feriado($data) {
+   
+  }
+  
+  public function desdobramentos(){
+    
+    $dao = new \app\model\Tab_hist_proventosDAO();
+    $lista_proventos = $dao->getProventos();
+    
+    foreach ($lista_proventos as $provento) {
+      $cod_ativo = $provento['cod_ativo'];
+      $descricao = $provento['descricao'];
+
+      $tipo = $provento['tipo'];
+      $data = $provento['data'];
+
+      if ($tipo == "Grupamento") {
+        $split_desc = explode("/", trim($descricao));
+        $divisor = str_replace(".", "", $split_desc[0]);
+        $divisor = str_replace(",", ".", $split_desc[0]);
+
+        $sql = "update Tab_preco set abertura=abertura*$divisor, maxima=maxima*$divisor, minima=minima*$divisor, medio=medio*$divisor, fechamento=fechamento*$divisor" ;
+        $sql .= " where data_pregao<='$data' and cod_ativo=$cod_ativo; \n";
+        //echo "\n---Grupamento\n";
+        echo $sql;
+      }
+      
+      if ($tipo == "Desdobramento") {
+        $split_desc = explode("/", trim($descricao));
+        $fator = str_replace(".", "", $split_desc[0]);
+        $fator = str_replace(",", ".", $split_desc[0]);
+        
+        $sql = "update Tab_preco set abertura=abertura/$fator, maxima=maxima/$fator, minima=minima/$fator, medio=medio/$fator, fechamento=fechamento/$fator" ;
+        $sql .= " where data_pregao<='$data' and cod_ativo=$cod_ativo; \n";
+        //echo "\n---Desdobramento\n";
+        echo $sql;
+      }
+            
+    }
+
+    exit;
+  }
+  
+  public function agrupamentos(){
+    
+  }
   
   //http://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D11072016.ZIP
   public function importadorDiario() {
-
-    echo date("dmY");
-
-
+    
+    $prefixo = "COTAHIST_D";
+    $data_arquivo = date("dmY", strtotime("-2 day"));
+    $data = date("Y-m-d", strtotime("-2 day"));
+    $url = "http://bvmf.bmfbovespa.com.br/InstDados/SerHist/";
+    
+    //echo $data;
+    echo "<br>";
+    if (!$this->finalDesemana($data) && !$this->feriado($data)) {
+      
+      echo "Importar";
+      
+    }
+    exit;
+    
+    $source = "http://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D11072016.ZIP";
+    //$source = $url . $prefixo . $data . "ZIP";
+    $dest_tmp = "/tmp/" . $prefixo . $data . "ZIP";
+    
+   
     exit;
   }
   
@@ -48,7 +116,7 @@ class Importador extends \stphp\Controller {
     $lista_ativos = $preco_dao->listarAtivos();
 
     $caminho = "/var/www/html/simulador-acoes/cotahist/proventos/";
-    $caminho_arquivo = "/var/www/html/simulador-acoes/cotahist/hist_proventos.sql";
+    $caminho_arquivo = "/var/www/html/simulador-acoes/dump/hist_proventos.sql";
 
     $handle_hist = fopen($caminho_arquivo, "w+");
     
@@ -68,12 +136,19 @@ class Importador extends \stphp\Controller {
           }
           
           if ($body) {
-            $slipt = explode("<td>", $linha);
-            unset($slipt[0]);
-            if (count($slipt) === 4) {
-              $tipo = str_replace("</td>", "", $slipt[1]);
-              $data = str_replace("</td>", "", $slipt[2]);
-              $descricao = str_replace("</td>", "", $slipt[3]);
+            $split = explode("<td>", $linha);
+            unset($split[0]);
+            if (count($split) === 4) {
+              $tipo = str_replace("</td>", "", $split[1]);
+              $data = str_replace("</td>", "", $split[2]);
+              $split_date = explode("/", $data);
+              if (count($split_date) === 1) {
+                //"Se não tiver data, ignora";
+                echo "Não gerado - " . $cod_ativo . "\n";
+                continue;
+              }
+              $data = date('Y-m-d',  strtotime($split_date[2]. "-" . $split_date[1] . "-" . $split_date[0]));
+              $descricao = str_replace("</td>", "", $split[3]);
               
               $sql = "insert into Tab_hist_provento (cod_ativo, tipo, data, descricao) values ('" . $cod_ativo . "', '". $tipo . "', '". $data . "', '" . $descricao . "');";
               fwrite($handle_hist, utf8_encode($sql) . "\n");
