@@ -33,9 +33,7 @@ class Importador extends \stphp\Controller {
   }
 
   function finalDesemana($data) {
-    echo $data;
     $dia_semana = date('w', strtotime($data));
-    echo $dia_semana . "<br>";
     return ($dia_semana == 0 || $dia_semana == 6);
   }
   
@@ -101,28 +99,43 @@ class Importador extends \stphp\Controller {
   }
   
   //http://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D11072016.ZIP
+  //
   public function importadorDiario() {
     
     $prefixo = "COTAHIST_D";
-    $data_arquivo = date("dmY", strtotime("-2 day"));
-    $data = date("Y-m-d", strtotime("-2 day"));
+    $data_arquivo = date("dmY", strtotime("-1 day"));
+    $data = date("Y-m-d", strtotime("-1day"));
+    
     $url = "http://bvmf.bmfbovespa.com.br/InstDados/SerHist/";
     
-    //echo $data;
-    echo "<br>";
+    
     if (!$this->finalDesemana($data) && !$this->feriado($data)) {
       
-      echo "Importar";
-      
+      $dir_arquivo_diario = getcwd() . "/cotahist/arquivos_diarios/";
+      //$source = "http://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D11072016.ZIP";
+      $url_arquivo_bovespa = $url . $prefixo . $data_arquivo . ".ZIP";
+      $dir_arquivo_temporario = "/tmp/" . $prefixo . $data . ".ZIP";
+
+      if (!copy($url_arquivo_bovespa, $dir_arquivo_temporario)){
+        throw new Exception("Falha ao salvar arquivo do dia: " . $data);
+      }
+
+      $zip = new \ZipArchive();
+      $zip->open($dir_arquivo_temporario);
+      $zip->extractTo($dir_arquivo_diario);
+      $zip->close();
+
+      $dao = new \app\model\PrecoDAO();
+      $imp_cotacoes = new \app\model\ImportadorCotacoes($dao, $data_arquivo);
+      $imp_cotacoes->setPath($dir_arquivo_diario);
+      $imp_cotacoes->importaArquivo($prefixo . $data_arquivo . ".TXT");
+
+      echo "Arquivo diário importado.";
+
     }
+
     exit;
-    
-    $source = "http://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D11072016.ZIP";
-    //$source = $url . $prefixo . $data . "ZIP";
-    $dest_tmp = "/tmp/" . $prefixo . $data . "ZIP";
-    
-   
-    exit;
+
   }
   
   public function importarProventosBase(){

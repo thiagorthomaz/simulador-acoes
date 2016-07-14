@@ -26,5 +26,6 @@ stphp\STPHP::registerExtensions();
 stphp\STPHP::registerAutoload();
 
 $imp = new \app\controller\Importador();
-$imp->importarBase();
+//$imp->importarBase();
+$imp->importadorDiario();
 
