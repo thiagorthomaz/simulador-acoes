@@ -59,22 +59,36 @@ class Importador extends \stphp\Controller {
         $split_desc = explode("/", trim($descricao));
         $divisor = str_replace(".", "", $split_desc[0]);
         $divisor = str_replace(",", ".", $split_desc[0]);
+        if (count(explode(".", $divisor)) > 2){
+          $divisor_split = explode(".", $divisor);
+          $divisor = $divisor_split[0] . $divisor_split[1] . "." . $divisor_split[2];
+        }
 
         $sql = "update Tab_preco set abertura=abertura*$divisor, maxima=maxima*$divisor, minima=minima*$divisor, medio=medio*$divisor, fechamento=fechamento*$divisor" ;
-        $sql .= " where data_pregao<='$data' and cod_ativo=$cod_ativo; \n";
+        $sql .= " where data_pregao<='$data' and cod_ativo='$cod_ativo'; \n";
+        $update = "update Tab_hist_provento set atualizado = true where cod_ativo='$cod_ativo' and data='$data' and descricao='$descricao';\n";
         //echo "\n---Grupamento\n";
-        echo $sql;
+        echo $sql . $update;
+        
       }
       
       if ($tipo == "Desdobramento") {
-        $split_desc = explode("/", trim($descricao));
+        $split_desc = explode(":", trim($descricao));
+        $split_desc = explode(" ", trim($split_desc[1]));
+
         $fator = str_replace(".", "", $split_desc[0]);
         $fator = str_replace(",", ".", $split_desc[0]);
-        
-        $sql = "update Tab_preco set abertura=abertura/$fator, maxima=maxima/$fator, minima=minima/$fator, medio=medio/$fator, fechamento=fechamento/$fator" ;
-        $sql .= " where data_pregao<='$data' and cod_ativo=$cod_ativo; \n";
+        if (count(explode(".", $fator)) > 2){
+          $fator_split = explode(".", $fator);
+          $fator = $fator_split[0] . $fator_split[1] . "." . $fator_split[2];
+        }
         //echo "\n---Desdobramento\n";
-        echo $sql;
+        $sql = "update Tab_preco set abertura=abertura/$fator, maxima=maxima/$fator, minima=minima/$fator, medio=medio/$fator, fechamento=fechamento/$fator" ;
+        $sql .= " where data_pregao<='$data' and cod_ativo='$cod_ativo'; \n";
+        $update = "update Tab_hist_provento set atualizado = true where cod_ativo='$cod_ativo' and data='$data' and descricao='$descricao';\n";
+        
+        
+        //echo $sql . $update;
       }
             
     }

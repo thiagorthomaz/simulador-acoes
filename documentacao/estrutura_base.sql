@@ -15,7 +15,8 @@ create table Tab_hist_provento (
   cod_ativo char(5),
   tipo varchar(20),
   data date,
-  descricao varchar(100)
+  descricao varchar(100),
+  atualizado boolean
 );
 
 create table Tab_feriados (

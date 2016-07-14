@@ -21,11 +21,10 @@ class Tab_hist_proventosDAO extends \app\model\DAO {
 
     $sql = "select cod_ativo, data, descricao, tipo  from " . $this->getTable();
     $sql .= " where ";
-    $sql .= " tipo in ('Grupamento', 'Desdobramento') and data >= '2005-01-01'";
+    $sql .= " tipo in ('Grupamento', 'Desdobramento') and data >= '2005-01-01' and atualizado = false";
     $sql .= " order by 1,2,3,4 asc";
-    
+
     $rs = $this->sendQuery($sql);
-    
     return $rs->getResultSet();    
     
   }
