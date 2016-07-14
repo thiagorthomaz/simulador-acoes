@@ -13,15 +13,9 @@ class SetupIFR implements \app\setup\iSetup {
   private $criterio_venda;
   private $comprado = false;
   
-  private $trades = array();
-  
   public function __construct($criterio_ifr_compra, $criterio_ifr_venda) {
     $this->criterio_compra = $criterio_ifr_compra;
     $this->criterio_venda = $criterio_ifr_venda;
-  }
-  
-  public function getresultado(){
-    return $this->trades;
   }
 
   public function avaliarvenda($preco) {

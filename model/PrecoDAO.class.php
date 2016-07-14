@@ -30,10 +30,23 @@ class PrecoDAO extends \app\model\DAO {
     return $rs->getResultSet();
     
   }
+
+  public function precaoAtivoPorData($codigo_ativo, $data){
+
+    $params = array('cod_ativo' => $codigo_ativo, 'data_pregao' => $data);
+    
+    $sql = "select * from " . $this->getTable();
+    $sql .= $this->where($params);
+    $sql .= " order by data_pregao asc";
+
+    $rs = $this->sendQuery($sql, $params);
+    return $rs->getResultSet();
+    
+  }
   
   public function listarAtivos(){
-    //$sql = "select distinct cod_ativo from Tab_preco where negocios > 25000 order by 1";
-    $sql = "select distinct cod_ativo from Tab_preco";
+    $sql = "select distinct cod_ativo from Tab_preco where negocios > 25000 order by 1";
+    //$sql = "select distinct cod_ativo from Tab_preco";
     $rs = $this->sendQuery($sql);
     return $rs->getResultSet();
   }

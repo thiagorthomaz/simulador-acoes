@@ -86,7 +86,7 @@ class Importador extends \stphp\Controller {
         $update = "update Tab_hist_provento set atualizado = true where cod_ativo='$cod_ativo' and data='$data' and descricao='$descricao';\n";
         
         
-        //echo $sql . $update;
+        echo $sql . $update;
       }
             
     }

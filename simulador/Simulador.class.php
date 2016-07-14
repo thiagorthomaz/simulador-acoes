@@ -97,7 +97,7 @@ class Simulador {
           $this->carteira_final = clone $this->carteira;
           $mms_anterior = $precos_calculados[$i-1]["mms"];
           $mms_atual = $cotacao["mms"];
-          
+
           if ($mms_atual > $mms_anterior){
             $operacao->setMms("Cima");
           }

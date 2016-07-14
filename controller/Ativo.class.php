@@ -60,4 +60,53 @@ class Ativo extends \stphp\Controller {
     
   }
   
+  public function analisadorDiario() {
+    
+    $lista_possiveis_trades = array();
+    $lista_ativos_compra = array();
+    $lista_ativos_venda = array();
+    
+    $setup_ifr = new \app\setup\SetupIFR(30, 80);
+    
+    $preco_dao = new \app\model\PrecoDAO();
+    $lista_ativos = $preco_dao->listarAtivos();
+    
+    $data_ontem = date("Y-m-d", strtotime("-1 day"));
+    $data_hoje = date("Y-m-d");
+
+    foreach ($lista_ativos as $ativo) {
+      $cod_ativo = $ativo['cod_ativo'];
+      $dados = $this->getAtivo($cod_ativo);
+      
+      $ifr = new \app\estudos\IFR($dados);
+      $ifr->calcula(2);
+      $precos_calculados = $ifr->getResultado();
+      
+      foreach (array_reverse($precos_calculados) as $cotacao) {
+        if ($cotacao['data_pregao'] == $data_ontem || $cotacao['data_pregao'] == $data_hoje) {
+          $comprar = $setup_ifr->avaliarCompra($cotacao);
+          $vender = $setup_ifr->avaliarVenda($cotacao);
+          if ($comprar){
+            $lista_ativos_compra[] = $cotacao;
+          }
+          
+          if ($vender){
+            $lista_ativos_venda[] = $cotacao;
+          }
+          
+          break;
+
+        }        
+        
+      } 
+    }
+    
+    $lista_possiveis_trades["compras"] = $lista_ativos_compra;;
+    $lista_possiveis_trades["venda"] = $lista_ativos_venda;
+    print_r($lista_possiveis_trades);
+    
+    exit;
+ 
+  }
+  
 }
