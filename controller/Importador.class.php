@@ -16,14 +16,13 @@ class Importador extends \stphp\Controller {
 
     $dao = new \app\model\PrecoDAO();
 
-    //$anos = array('2009','2010','2011','2012','2013','2014','2015');
-    $anos = array('2016');
+    $anos = array('2005','2006','2007','2008', '2009','2010','2011','2012','2013','2014','2015', '2016');
 
     foreach ($anos as $ano) {
       echo "\nIniciado a importação do ano de " . $ano;
       $filename = "COTAHIST_A" . $ano . ".TXT";
       $imp_cotacoes = new \app\model\ImportadorCotacoes($dao, $ano);
-      $imp_cotacoes->setPath("/var/www/html/simulador-acoes/cotahist/");
+      $imp_cotacoes->setPath(CAMINHO_SISTEMA . "/cotahist/");
       $imp_cotacoes->importaArquivo($filename);
       echo "\nFinalizado a importação do ano de " . $ano;
     }
@@ -45,7 +44,7 @@ class Importador extends \stphp\Controller {
     
     $dao = new \app\model\Tab_hist_proventosDAO();
     $lista_proventos = $dao->getProventos();
-    
+    print_r($lista_proventos);exit;
     foreach ($lista_proventos as $provento) {
       $cod_ativo = $provento['cod_ativo'];
       $descricao = $provento['descricao'];
@@ -104,36 +103,45 @@ class Importador extends \stphp\Controller {
     
     $prefixo = "COTAHIST_D";
     $data_arquivo = date("dmY", strtotime("-1 day"));
-    $data = date("Y-m-d", strtotime("-1day"));
+    $data = date("Y-m-d", strtotime("-1 day"));
+    $logfile_handle = fopen(CAMINHO_SISTEMA . "/log/log_" . $data_arquivo . ".txt", "a+");
     
-    $url = "http://bvmf.bmfbovespa.com.br/InstDados/SerHist/";
-    
-    
-    if (!$this->finalDesemana($data) && !$this->feriado($data)) {
-      
-      $dir_arquivo_diario = getcwd() . "/cotahist/arquivos_diarios/";
-      //$source = "http://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D11072016.ZIP";
-      $url_arquivo_bovespa = $url . $prefixo . $data_arquivo . ".ZIP";
-      $dir_arquivo_temporario = "/tmp/" . $prefixo . $data . ".ZIP";
+    try {
 
-      if (!copy($url_arquivo_bovespa, $dir_arquivo_temporario)){
-        throw new Exception("Falha ao salvar arquivo do dia: " . $data);
+      $url = "http://bvmf.bmfbovespa.com.br/InstDados/SerHist/";
+
+
+      if (!$this->finalDesemana($data) && !$this->feriado($data)) {
+
+        $dir_arquivo_diario = getcwd() . "/cotahist/arquivos_diarios/";
+        //$source = "http://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D11072016.ZIP";
+        $url_arquivo_bovespa = $url . $prefixo . $data_arquivo . ".ZIP";
+        $dir_arquivo_temporario = "/tmp/" . $prefixo . $data . ".ZIP";
+
+        if (!copy($url_arquivo_bovespa, $dir_arquivo_temporario)){
+          throw new \Exception("Falha ao salvar arquivo do dia: " . $data);
+        }
+
+        $zip = new \ZipArchive();
+        $zip->open($dir_arquivo_temporario);
+        $zip->extractTo($dir_arquivo_diario);
+        $zip->close();
+
+        $dao = new \app\model\PrecoDAO();
+        $imp_cotacoes = new \app\model\ImportadorCotacoes($dao, $data_arquivo);
+        $imp_cotacoes->setPath($dir_arquivo_diario);
+        $imp_cotacoes->importaArquivo($prefixo . $data_arquivo . ".TXT");
+
+        fwrite($logfile_handle, "Arquivo diário importado. \n");
+
       }
-
-      $zip = new \ZipArchive();
-      $zip->open($dir_arquivo_temporario);
-      $zip->extractTo($dir_arquivo_diario);
-      $zip->close();
-
-      $dao = new \app\model\PrecoDAO();
-      $imp_cotacoes = new \app\model\ImportadorCotacoes($dao, $data_arquivo);
-      $imp_cotacoes->setPath($dir_arquivo_diario);
-      $imp_cotacoes->importaArquivo($prefixo . $data_arquivo . ".TXT");
-
-      echo "Arquivo diário importado.";
-
+    }  catch (\Exception $e) {
+      
+      $texto = $e->getFile() . "\n Linha: " . $e->getLine() . ": " . $e->getMessage();
+      fwrite($logfile_handle, $texto);
+      fwrite($logfile_handle, "\n\n----------------------------------\n\n");
     }
-
+    fclose($logfile_handle);
     exit;
 
   }
@@ -142,8 +150,8 @@ class Importador extends \stphp\Controller {
     $preco_dao = new \app\model\PrecoDAO();
     $lista_ativos = $preco_dao->listarAtivos();
 
-    $caminho = "/var/www/html/simulador-acoes/cotahist/proventos/";
-    $caminho_arquivo = "/var/www/html/simulador-acoes/dump/hist_proventos.sql";
+    $caminho = CAMINHO_SISTEMA . "/cotahist/proventos/";
+    $caminho_arquivo = CAMINHO_SISTEMA . "/dump/hist_proventos.sql";
 
     $handle_hist = fopen($caminho_arquivo, "w+");
     
@@ -214,7 +222,7 @@ class Importador extends \stphp\Controller {
     foreach ($lista_ativos as $ativo) {
       $cod_ativo = $ativo["cod_ativo"];
 
-      $destino = "/var/www/html/simulador-acoes/cotahist/proventos/" . $cod_ativo . ".html";
+      $destino = CAMINHO_SISTEMA . "/cotahist/proventos/" . $cod_ativo . ".html";
       $url_fonte = "http://www.guiainvest.com.br/provento/default.aspx?sigla=" . $cod_ativo;
       if (file_exists($destino)) {
         continue;

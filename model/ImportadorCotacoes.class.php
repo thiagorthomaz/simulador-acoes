@@ -28,9 +28,8 @@ class ImportadorCotacoes {
      
       $this->path = "./";
       $this->conexao_db = $db_conn;
-      
-      $dir = getcwd();
-      $this->logfile_handle = fopen($dir . "/log/log_erros_" . $data . ".txt", "a");
+
+      $this->logfile_handle = fopen(CAMINHO_SISTEMA . "/log/log_erros_" . $data . ".txt", "a");
       
    }
 

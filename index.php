@@ -1,7 +1,9 @@
 <?php
 
+require_once "./config.php";
+
 $core_path = "/var/www/html/stphp";
-$app_path = "/var/www/html/simulador-acoes";
+$app_path = CAMINHO_SISTEMA;
 
 ini_set('display_errors', 'On');
 error_reporting(E_ALL);
