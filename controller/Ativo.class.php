@@ -70,8 +70,12 @@ class Ativo extends \stphp\Controller {
     
     $preco_dao = new \app\model\PrecoDAO();
     $lista_ativos = $preco_dao->listarAtivos();
-    
+
     $data_ontem = date("Y-m-d", strtotime("-1 day"));
+    
+    $calendario = new \app\model\Calendario();
+    $dia_util = $calendario->getUltimoDiaUtil($data_ontem);
+    $dia_util = date("Y-m-d", strtotime($dia_util));
     $data_hoje = date("Y-m-d");
 
     foreach ($lista_ativos as $ativo) {
@@ -83,7 +87,7 @@ class Ativo extends \stphp\Controller {
       $precos_calculados = $ifr->getResultado();
       
       foreach (array_reverse($precos_calculados) as $cotacao) {
-        if ($cotacao['data_pregao'] == $data_ontem || $cotacao['data_pregao'] == $data_hoje) {
+        if ($cotacao['data_pregao'] == $dia_util || $cotacao['data_pregao'] == $data_hoje) {
           $comprar = $setup_ifr->avaliarCompra($cotacao);
           $vender = $setup_ifr->avaliarVenda($cotacao);
           if ($comprar){
