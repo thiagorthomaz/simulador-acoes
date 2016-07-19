@@ -6,6 +6,9 @@ app.factory("AcoesAPI", function($http,config){
         },
         listaCodigosAtivos : function(){
             return $http.get(config.baseUrl + "Ativo.listaCodigosAtivos");
+        },
+        analisadorDiario : function () {
+          return $http.get(config.baseUrl + "Ativo.analisadorDiario");
         }
     };
     

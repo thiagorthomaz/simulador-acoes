@@ -1,0 +1,46 @@
+<h1>Resumo diário</h1>
+
+<div class="row">
+  
+  <div class="col-md-6">
+    <h2>Compra</h2>
+    
+    <table class="table">
+      <tr>
+        <th>Ativo</th>
+        <th>Data</th>
+        <th>IFR</th>
+        <th>Fechamento</th>
+      </tr>
+      <tr ng-repeat="ac in lista_acoes_compra">
+        <td>{{ ac.cod_ativo }}</td>
+        <td>{{ ac.data_pregao }}</td>
+        <td>{{ ac.ifr | number:2}}</td>
+        <td>{{ ac.fechamento | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
+      </tr>
+    </table>
+
+  </div>
+
+  <div class="col-md-6">
+    <h2>Venda</h2>
+    
+    <table class="table">
+      <tr>
+        <th>Ativo</th>
+        <th>Data</th>
+        <th>IFR</th>
+        <th>Fechamento</th>
+      </tr>
+      <tr ng-repeat="ac in lista_acoes_venda">
+        <td>{{ ac.cod_ativo }}</td>
+        <td>{{ ac.data_pregao }}</td>
+        <td>{{ ac.ifr | number:2}}</td>
+        <td>{{ ac.fechamento | currency:NUMBER_FORMATS.CURRENCY_SYM }}</td>
+      </tr>
+    </table>
+
+  </div>
+  
+  
+</div>

@@ -107,9 +107,10 @@ class Ativo extends \stphp\Controller {
     
     $lista_possiveis_trades["compras"] = $lista_ativos_compra;;
     $lista_possiveis_trades["venda"] = $lista_ativos_venda;
-    print_r($lista_possiveis_trades);
     
-    exit;
+    $resposta = new \app\view\RespostaJson();
+    $resposta->addArray("lista_ativos", $lista_possiveis_trades);
+    return $resposta;
  
   }
   

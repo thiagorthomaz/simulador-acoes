@@ -11,8 +11,13 @@ app.config(function($stateProvider, $urlRouterProvider) {
   // Now set up the states
   $stateProvider
     .state('backtest_ifr', {
-      url: "/backtest_ifr/:cod_ativo",
+      url: "/backtest_ifr",
       controller: "BacktestIFRCtrl",
       templateUrl: "partials/backtest_ifr.html"
+    })
+    .state('resumo', {
+      url: "/resumo",
+      controller: "ResumoCtrl",
+      templateUrl: "partials/resumo.html"
     });
 });
