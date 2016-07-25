@@ -30,17 +30,6 @@ class Importador extends \stphp\Controller {
     echo "-------------- CONCLUÍDO! -------------------";
     exit;
   }
-
-  function finalDesemana($data) {
-    $dia_semana = date('w', strtotime($data));
-    return ($dia_semana == 0 || $dia_semana == 6);
-  }
-  
-  function feriado($data) {
-    
-    
-    
-  }
   
   public function desdobramentos(){
     
@@ -103,17 +92,20 @@ class Importador extends \stphp\Controller {
   //
   public function importadorDiario() {
     
+    $calendario = new \app\model\Calendario();
+
     $prefixo = "COTAHIST_D";
-    $data_arquivo = date("dmY", strtotime("-1 day"));
-    $data = date("Y-m-d", strtotime("-1 day"));
+    $dia_anterior = date("Y-m-d h:i:s", strtotime("-1 day"));
+    $ultimo_dia_util = $calendario->getUltimoDiaUtil($dia_anterior);
+    $data_arquivo = date("dmY", strtotime($ultimo_dia_util));
+    $data = date("Y-m-d", strtotime($ultimo_dia_util));
+
     $logfile_handle = fopen(CAMINHO_SISTEMA . "/log/log_" . $data_arquivo . ".txt", "a+");
     
     try {
 
       $url = "http://bvmf.bmfbovespa.com.br/InstDados/SerHist/";
 
-
-      if (!$this->finalDesemana($data) && !$this->feriado($data)) {
 
         $dir_arquivo_diario = getcwd() . "/cotahist/arquivos_diarios/";
         //$source = "http://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D11072016.ZIP";
@@ -136,7 +128,6 @@ class Importador extends \stphp\Controller {
 
         fwrite($logfile_handle, "Arquivo diário importado. \n");
 
-      }
     }  catch (\Exception $e) {
       
       $texto = $e->getFile() . "\n Linha: " . $e->getLine() . ": " . $e->getMessage();

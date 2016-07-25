@@ -36,6 +36,7 @@ class Simulador {
     $this->setup = $setup;
     $this->carteira = $carteira;
     $this->carteira_inicial = clone $carteira;
+    $this->carteira_final = new \app\model\Carteira(0);
   }
 
   
