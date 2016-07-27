@@ -1,0 +1,1 @@
+2016-07-27 09:06:17 - Erro ao importar a cotação: 2016-07-26;ALUP13;16.05;16.05;16;16.02;16;42;427960;2016-07-27 09:06:17. Errormsg: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '2016-07-26-ALUP1' for key 'PRIMARY'
