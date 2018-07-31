@@ -47,7 +47,6 @@ class ImportadorCotacoes {
      $sql = "INSERT INTO Tab_preco (data_pregao, cod_ativo, abertura, maxima, minima, medio, fechamento, negocios, volume_financeiro, data_importacao) "
          . "VALUE (:data_pregao, :cod_ativo, :abertura, :maxima, :minima, :medio, :fechamento, :negocios, :volume_financeiro, :data_importacao)";
       $rs = $this->conexao_db->sendQuery($sql, $dados);
-
       if (!is_null($rs->getError_code())) {
         $msg = $rs->getError_message();
          throw new \Exception($msg);
@@ -85,7 +84,7 @@ class ImportadorCotacoes {
     * @return array
     */
    public function leArquivo($filename) {
-      return file($this->path . $filename);
+      return file($filename);
    }
 
    /**

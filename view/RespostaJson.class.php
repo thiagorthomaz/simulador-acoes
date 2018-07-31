@@ -31,4 +31,12 @@ class RespostaJson extends \stphp\http\HttpResponse implements \JsonSerializable
     return 200;
   }
 
+  public function getType() {
+    return "json";
+  }
+
+  public function serialize() {
+    
+  }
+
 }

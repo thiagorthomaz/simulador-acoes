@@ -9,18 +9,53 @@ namespace app\controller;
  */
 class Importador extends \stphp\Controller {
 
+  public static $anos = array('2005','2006','2007','2008', '2009','2010','2011','2012','2013','2014','2015', '2016', '2017', '2018');
+  
+  public static $caminho = CAMINHO_SISTEMA . "/arquivos_acoes/anual/";
+  
+  public function baixarAquivosAnuais() {
+    
+    $url = "http://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_A[ano].ZIP";
+    
+    foreach (self::$anos as $ano) {
+    
+      $file_zip_name = self::$caminho . $ano . ".zip";
+      $url_download = str_replace("[ano]", $ano, $url);
+      $extrair_em = self::$caminho . $ano . "/";
+      
+      if (!file_exists($file_zip_name)) {
+        $zip = file_get_contents($url_download);
+        file_put_contents($file_zip_name, $zip);
+      }
+      
+      if (file_exists($file_zip_name)) {
+        $zip = new \ZipArchive();
+        $res = $zip->open($file_zip_name);
+        if ($res === TRUE) {
+          $zip->extractTo($extrair_em);
+          $zip->close();
+        }
+      }
+
+    }
+    
+    
+  }
+  
   public function importarBase() {
 
+    
     ini_set('memory_limit', '1024M');
 
-
+    
+    $this->baixarAquivosAnuais();
+    
     $dao = new \app\model\PrecoDAO();
 
-    $anos = array('2005','2006','2007','2008', '2009','2010','2011','2012','2013','2014','2015', '2016');
-
-    foreach ($anos as $ano) {
+    foreach (self::$anos as $ano) {
       echo "\nIniciado a importação do ano de " . $ano;
-      $filename = "COTAHIST_A" . $ano . ".TXT";
+      $filename = self::$caminho . $ano . "/COTAHIST_A" . $ano . ".TXT";
+
       $imp_cotacoes = new \app\model\ImportadorCotacoes($dao, $ano);
       $imp_cotacoes->setPath(CAMINHO_SISTEMA . "/cotahist/");
       $imp_cotacoes->importaArquivo($filename);

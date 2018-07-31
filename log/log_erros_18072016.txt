@@ -1,1 +1,0 @@
-2016-07-19 12:12:05 - Erro ao importar a cotação: 2016-07-18;GOGL35;94.92;94.92;94.92;94.92;94.92;9;85428;2016-07-19 12:12:05. Errormsg: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '2016-07-18-GOGL3' for key 'PRIMARY'
