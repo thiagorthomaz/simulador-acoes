@@ -5,13 +5,6 @@ namespace app\model;
 class ImportadorCotacoes {
 
    /**
-    * Caminho default onde o importador procurará por arquivos de cotações
-    *
-    * @var string
-    */
-   private $path;
-
-   /**
     * Handle de manipulação do arquivo de log de erros.
     *
     * @var resource
@@ -29,7 +22,7 @@ class ImportadorCotacoes {
       $this->path = "./";
       $this->conexao_db = $db_conn;
 
-      $this->logfile_handle = fopen(CAMINHO_SISTEMA . "/log/log_erros_" . $data . ".txt", "a");
+      $this->logfile_handle = fopen(CAMINHO_SISTEMA . "/log/log_erros_" . $data . ".txt", "a+");
       
    }
 
@@ -66,15 +59,6 @@ class ImportadorCotacoes {
          }
       }
       closedir($handle);
-   }
-
-   /**
-    * Enter description here...
-    *
-    * @param string $absolute_path
-    */
-   public function setPath($absolute_path) {
-      $this->path = $absolute_path;
    }
 
    /**

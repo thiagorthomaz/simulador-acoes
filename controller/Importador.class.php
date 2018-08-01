@@ -9,36 +9,110 @@ namespace app\controller;
  */
 class Importador extends \stphp\Controller {
 
-  public static $anos = array('2005','2006','2007','2008', '2009','2010','2011','2012','2013','2014','2015', '2016', '2017', '2018');
+  //public static $anos = array('2005','2006','2007','2008', '2009','2010','2011','2012','2013','2014','2015', '2016', '2017', '2018');
+  public static $anos = array('2005');
   
-  public static $caminho_anual = CAMINHO_SISTEMA . "/arquivos_acoes/anual/";
-  public static $caminho_diario = CAMINHO_SISTEMA . "/arquivos_acoes/diario/";
-  
-  public function baixarAquivosAnuais() {
-    
-    $url = "http://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_A[ano].ZIP";
-    
-    foreach (self::$anos as $ano) {
-    
-      $file_zip_name = self::$caminho_anual . $ano . ".zip";
-      $url_download = str_replace("[ano]", $ano, $url);
-      $extrair_em = self::$caminho_anual . $ano . "/";
-      
-      if (!file_exists($file_zip_name)) {
-        $zip = file_get_contents($url_download);
-        file_put_contents($file_zip_name, $zip);
-      }
-      
-      if (file_exists($file_zip_name)) {
-        $zip = new \ZipArchive();
-        $res = $zip->open($file_zip_name);
-        if ($res === TRUE) {
-          $zip->extractTo($extrair_em);
-          $zip->close();
-        }
-      }
+  public static $caminho_arquivo = CAMINHO_SISTEMA . "/arquivos_acoes/";
 
+  /**
+   * Baixa arquivo de cotações do site da Bovespa
+   * 
+   * @param type $nome_arquivo
+   * @param type $pasta_destino
+   * @return string caminho para o arquivo baixado
+   */
+  private function baixarArquivo($nome_arquivo, $pasta_destino) {
+    
+    $url_base = "http://bvmf.bmfbovespa.com.br/InstDados/SerHist/[nome_arquivo].ZIP";
+    $url_download = str_replace("[nome_arquivo]", $nome_arquivo, $url_base);
+    $file_zip_name = $pasta_destino. $nome_arquivo . ".zip";
+    
+    if (!is_writeable($pasta_destino)) {
+      throw new \app\exception\ArquivoException("Falta de permissão de escrita no diretório para baixar o arquivo.");
     }
+    
+    if (!file_exists($file_zip_name)) {
+      $zip = file_get_contents($url_download);
+      file_put_contents($file_zip_name, $zip);
+    }
+
+    return $file_zip_name;
+    
+  }
+  
+  
+  private function extrairArquivo($file_zip_name, $extrair_em) {
+    
+    if (!is_writeable($extrair_em)) {
+      throw new \app\exception\ArquivoException("Falta de permissão para descompactar o arquivo.");
+    }
+    
+    if (file_exists($file_zip_name)) {
+      $zip = new \ZipArchive();
+      $res = $zip->open($file_zip_name);
+      if ($res === TRUE) {
+        $zip->extractTo($extrair_em);
+        $zip->close();
+      }
+    }
+    
+  }
+
+  public function baixarAquivosAnuais() {
+
+    foreach (self::$anos as $ano) {
+      $file_zip_name = $this->baixarArquivo("COTAHIST_A" . $ano, self::$caminho_arquivo);
+      $this->extrairArquivo($file_zip_name, self::$caminho_arquivo);
+    }
+
+  }
+  
+  public function baixarAquivoDiario($data_arquivo) {
+    
+    $filename = "COTAHIST_D" . $data_arquivo;
+    
+    $extrair_em = self::$caminho_arquivo;
+    $file_zip_name = $this->baixarArquivo($filename, self::$caminho_arquivo);
+    $this->extrairArquivo($file_zip_name, self::$caminho_arquivo);
+    
+    return $filename;
+
+  }
+  
+  //http://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D11072016.ZIP
+  //
+  public function importadorDiario() {
+
+    
+    $calendario = new \app\model\Calendario();
+
+    $url = "http://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D[data].ZIP";
+    
+    $dia_anterior = date("Y-m-d h:i:s", strtotime("-1 day"));
+    $ultimo_dia_util = $calendario->getUltimoDiaUtil($dia_anterior);
+    $data_arquivo = date("dmY", strtotime($ultimo_dia_util));
+    $data = date("Y-m-d", strtotime($ultimo_dia_util));
+
+    $logfile_handle = fopen(CAMINHO_SISTEMA . "/log/log_" . $data_arquivo . ".txt", "a+");
+    
+    try {
+   
+      $filename = $this->baixarAquivoDiario($data_arquivo);
+
+      $dao = new \app\model\PrecoDAO();
+      $imp_cotacoes = new \app\model\ImportadorCotacoes($dao, $data_arquivo);
+      $imp_cotacoes->importaArquivo(self::$caminho_arquivo . $filename . ".TXT");
+
+      fwrite($logfile_handle, "Arquivo diário importado. \n");
+
+    }  catch (\Exception $e) {
+      
+      $texto = $e->getFile() . "\n Linha: " . $e->getLine() . ": " . $e->getMessage();
+      fwrite($logfile_handle, $texto);
+      fwrite($logfile_handle, "\n\n----------------------------------\n\n");
+    }
+    fclose($logfile_handle);
+    exit;
 
   }
   
@@ -47,15 +121,14 @@ class Importador extends \stphp\Controller {
     ini_set('memory_limit', '1024M');
 
     $this->baixarAquivosAnuais();
-    
+
     $dao = new \app\model\PrecoDAO();
 
     foreach (self::$anos as $ano) {
       echo "\nIniciado a importação do ano de " . $ano;
-      $filename = self::$caminho . $ano . "/COTAHIST_A" . $ano . ".TXT";
+      $filename = self::$caminho_arquivo ."COTAHIST_A" . $ano . ".TXT";
 
       $imp_cotacoes = new \app\model\ImportadorCotacoes($dao, $ano);
-      $imp_cotacoes->setPath(CAMINHO_SISTEMA . "/cotahist/");
       $imp_cotacoes->importaArquivo($filename);
       echo "\nFinalizado a importação do ano de " . $ano;
     }
@@ -121,59 +194,7 @@ class Importador extends \stphp\Controller {
     
   } 
   
-  //http://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D11072016.ZIP
-  //
-  public function importadorDiario() {
-    
-    $calendario = new \app\model\Calendario();
-
-    $url = "http://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D[data].ZIP";
-    
-    $dia_anterior = date("Y-m-d h:i:s", strtotime("-1 day"));
-    $ultimo_dia_util = $calendario->getUltimoDiaUtil($dia_anterior);
-    $data_arquivo = date("dmY", strtotime($ultimo_dia_util));
-    $data = date("Y-m-d", strtotime($ultimo_dia_util));
-
-    $logfile_handle = fopen(CAMINHO_SISTEMA . "/log/log_" . $data_arquivo . ".txt", "a+");
-    
-    try {
-
-      $dir_arquivo_diario = getcwd() . "/cotahist/arquivos_diarios/";
-      $dir_arquivo_temporario = "/tmp/" . $data . ".ZIP";
-      $url_arquivo_bovespa = str_replace("[data]", $data_arquivo, $url);
-
-      $file_zip_name = self::$caminho_diario . $data . ".zip";
-      $extrair_em = self::$caminho_diario;
-      
-      if (!file_exists($file_zip_name)) {
-        $zip = file_get_contents($url_arquivo_bovespa);
-        file_put_contents($file_zip_name, $zip);
-      }
-      
-      if (file_exists($file_zip_name)) {
-        $zip = new \ZipArchive();
-        $zip->open($file_zip_name);
-        $zip->extractTo($extrair_em);
-        $zip->close();
-      }
-      
-      $dao = new \app\model\PrecoDAO();
-      $imp_cotacoes = new \app\model\ImportadorCotacoes($dao, $data_arquivo);
-      $imp_cotacoes->setPath($dir_arquivo_diario);
-      $imp_cotacoes->importaArquivo($extrair_em . 'COTAHIST_D' . $data_arquivo . ".TXT");
-
-      fwrite($logfile_handle, "Arquivo diário importado. \n");
-
-    }  catch (\Exception $e) {
-      
-      $texto = $e->getFile() . "\n Linha: " . $e->getLine() . ": " . $e->getMessage();
-      fwrite($logfile_handle, $texto);
-      fwrite($logfile_handle, "\n\n----------------------------------\n\n");
-    }
-    fclose($logfile_handle);
-    exit;
-
-  }
+  
   
   public function importarProventosBase(){
     $preco_dao = new \app\model\PrecoDAO();
