@@ -8,9 +8,9 @@ namespace app\controller;
  */
 class Ativo extends \stphp\Controller {
   
-  public function getAtivo($codigo_ativo){
+  public function getAtivo($codigo_ativo, $mms1){
     $preco_dao = new \app\model\PrecoDAO();
-    $rs = $preco_dao->precaoAtivo($codigo_ativo);
+    $rs = $preco_dao->precaoAtivo($codigo_ativo, $mms1);
     return $rs;
   }
   
@@ -27,10 +27,11 @@ class Ativo extends \stphp\Controller {
     $saldo_inicio = $request->getParams("saldo_inicio");
     $criterio_ifr_compra = $request->getParams("criterio_ifr_compra");
     $criterio_ifr_venda = $request->getParams("criterio_ifr_venda");
-    $periodo = $request->getParams("periodo");
+    $periodo_ifr = $request->getParams("periodo");
+    $mms1 = $request->getParams("mms1");
     
-    if (empty($periodo)) {
-      $periodo = 200;
+    if (empty($periodo_ifr)) {
+      $periodo_ifr = 2;
     }
     
     if (empty($criterio_ifr_compra)) {
@@ -45,12 +46,12 @@ class Ativo extends \stphp\Controller {
       $saldo_inicio = 4000;
     }
     
-    $dados = $this->getAtivo($cod_ativo);
+    $dados = $this->getAtivo($cod_ativo, $mms1);
     
     $carteira = new \app\model\Carteira($saldo_inicio);
 
-    $setup_ifr = new \app\setup\SetupIFR($criterio_ifr_compra, $criterio_ifr_compra);
-    $simulador = new \app\simulador\Simulador($setup_ifr, $carteira, $periodo);
+    $setup_ifr = new \app\setup\SetupIFR($criterio_ifr_compra, $criterio_ifr_compra, $periodo_ifr);
+    $simulador = new \app\simulador\Simulador($setup_ifr, $carteira, $mms1);
     $simulador->backTest($dados);
     $resultado = $simulador->getResultados();
 

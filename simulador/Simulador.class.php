@@ -16,6 +16,7 @@ class Simulador {
   protected $setup;
   protected $trades = array();
   protected $operacoes = array();
+  protected $periodo_mms;
   /**
    *
    * @var \app\model\Carteira
@@ -32,10 +33,11 @@ class Simulador {
    */
   protected $carteira_final;
           
-  function __construct(\app\setup\iSetup $setup, \app\model\Carteira $carteira) {
+  function __construct(\app\setup\iSetup $setup, \app\model\Carteira $carteira, $mms1) {
     $this->setup = $setup;
     $this->carteira = $carteira;
     $this->carteira_inicial = clone $carteira;
+    $this->periodo_mms = $mms1;
     $this->carteira_final = new \app\model\Carteira(0);
   }
 
@@ -43,7 +45,7 @@ class Simulador {
   public function backTest($dados){
     
     $periodo = $this->setup->getPeriodo();
-    $periodo_mms = 200;
+    $periodo_mms = $this->periodo_mms;
     
     $mms = new \app\estudos\MMS($dados, $periodo_mms);
     $mms->calcula();
@@ -61,7 +63,7 @@ class Simulador {
     }
         
     $operacao = null;
-
+    
     foreach ($precos_calculados as $i => $cotacao) {
 
       $comprado = $this->setup->comprado();

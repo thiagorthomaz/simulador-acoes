@@ -12,10 +12,12 @@ class SetupIFR implements \app\setup\iSetup {
   private $criterio_compra;
   private $criterio_venda;
   private $comprado = false;
+  private $periodo;
   
-  public function __construct($criterio_ifr_compra, $criterio_ifr_venda) {
+  public function __construct($criterio_ifr_compra, $criterio_ifr_venda, $periodo = 2) {
     $this->criterio_compra = $criterio_ifr_compra;
     $this->criterio_venda = $criterio_ifr_venda;
+    $this->periodo = $periodo;
   }
 
   public function avaliarvenda($preco) {
@@ -62,7 +64,7 @@ class SetupIFR implements \app\setup\iSetup {
   }
 
   public function getPeriodo() {
-    return 2;
+    return $this->periodo;
   }
 
 }

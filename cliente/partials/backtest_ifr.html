@@ -26,10 +26,14 @@
           </div>
           
           <div class="input-group">
-            <span class="input-group-addon" id="basic-addon1">Periodo</span>
+            <span class="input-group-addon" id="basic-addon1">Periodo IFR</span>
             <input type="text" class="form-control" ng-model="carteira_simular.periodo" placeholder="0" aria-describedby="basic-addon1">
           </div>
 
+          <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1">Media móvel simples 1</span>
+            <input type="text" class="form-control" ng-model="carteira_simular.mms1" placeholder="0" aria-describedby="basic-addon1">
+          </div>
           
           <div class="input-group">
             <span class="input-group-addon" id="basic-addon1">Saldo simular</span>
@@ -46,8 +50,7 @@
             <input type="text" class="form-control" ng-model="carteira_simular.criterio_venda" placeholder="0" aria-describedby="basic-addon1">
           </div>
 
-          {{ carteira_simular }}
-          <button type="button" ng-click="simularAtivo(carteira_simular)" class="btn btn-success">Simular 1</button>
+          <button type="button" ng-click="simularAtivo(carteira_simular)" class="btn btn-success">Simular</button>
           
           <hr>
           

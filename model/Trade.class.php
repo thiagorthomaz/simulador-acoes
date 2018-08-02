@@ -13,7 +13,7 @@ class Trade implements \stphp\ArraySerializable{
   private $lotes;
   private $data_operacao;
   private $valor;
-  private $tipo_trade; //Compra/Venda
+  private $tipo_trade; //Compra/Venda/Hold
 
 
   /**

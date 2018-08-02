@@ -18,16 +18,17 @@ class PrecoDAO extends \app\model\DAO {
     return "Tab_preco";
   }
 
-  public function precaoAtivo($codigo_ativo){
+  public function precaoAtivo($codigo_ativo, $periodo = 200){
 
     $params = array('cod_ativo' => $codigo_ativo);
     
     $sql = "select * from " . $this->getTable();
     $sql .= $this->where($params);
-    $sql .= " order by data_pregao asc";
+    $sql .= " order by data_pregao desc limit " . $periodo;
 
     $rs = $this->sendQuery($sql, $params);
-    return $rs->getResultSet();
+    
+    return array_reverse($rs->getResultSet());
     
   }
 

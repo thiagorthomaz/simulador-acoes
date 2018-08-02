@@ -5,7 +5,8 @@ app.controller("BacktestIFRCtrl", function ($scope, AcoesAPI, $stateParams) {
   $scope.cod_ativo = cod_ativo;
   
   $scope.carteira_simular = {
-    periodo : 200,
+    periodo : 2,
+    mms1 : 200,
     criterio_compra : 30,
     criterio_venda : 80,
     saldo_inicial : 4000,
@@ -19,8 +20,9 @@ app.controller("BacktestIFRCtrl", function ($scope, AcoesAPI, $stateParams) {
       var criterio_ifr_compra = _carteira_simular_.criterio_compra;
       var criterio_ifr_venda = _carteira_simular_.criterio_venda;
       var periodo = _carteira_simular_.periodo;
+      var mms1 = _carteira_simular_.mms1;
 
-      AcoesAPI.simularIFR(cod_ativo, criterio_ifr_compra, criterio_ifr_venda, periodo).success(function(r){
+      AcoesAPI.simularIFR(cod_ativo, criterio_ifr_compra, criterio_ifr_venda, periodo, mms1).success(function(r){
         $scope.acoes_simuladas = r.conteudo.Operacao;
         $scope.carteira_inicial = r.conteudo.carteira_inicial;
         $scope.carteira_final = r.conteudo.carteira_final;
