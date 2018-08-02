@@ -16,20 +16,41 @@ class Ativo extends \stphp\Controller {
   
   
   /**
-   * index.php?Ativo.simularIFR&cod_ativo=ABEV3
-   * 
+   * index.php?Ativo.simularIFR&cod_ativo=ABEV3&criterio_ifr_compra=30&criterio_ifr_venda=80&periodo=200
    * @return \app\view\RespostaJson
    */
   public function simularIFR(){
+    
     $request = $this->getRequest();
+    
     $cod_ativo = $request->getParams("cod_ativo");
+    $saldo_inicio = $request->getParams("saldo_inicio");
+    $criterio_ifr_compra = $request->getParams("criterio_ifr_compra");
+    $criterio_ifr_venda = $request->getParams("criterio_ifr_venda");
+    $periodo = $request->getParams("periodo");
+    
+    if (empty($periodo)) {
+      $periodo = 200;
+    }
+    
+    if (empty($criterio_ifr_compra)) {
+      $criterio_ifr_compra = 30;
+    }
+    
+    if (empty($criterio_ifr_venda)) {
+      $criterio_ifr_compra = 80;
+    }
+    
+    if (empty($saldo_inicio)) {
+      $saldo_inicio = 4000;
+    }
+    
     $dados = $this->getAtivo($cod_ativo);
-    //$dados = $this->getAtivo("LAME4");
+    
+    $carteira = new \app\model\Carteira($saldo_inicio);
 
-    $carteira = new \app\model\Carteira(4000);
-
-    $setup_ifr = new \app\setup\SetupIFR(30, 80);
-    $simulador = new \app\simulador\Simulador($setup_ifr, $carteira);
+    $setup_ifr = new \app\setup\SetupIFR($criterio_ifr_compra, $criterio_ifr_compra);
+    $simulador = new \app\simulador\Simulador($setup_ifr, $carteira, $periodo);
     $simulador->backTest($dados);
     $resultado = $simulador->getResultados();
 

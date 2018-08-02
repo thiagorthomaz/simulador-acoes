@@ -3,19 +3,56 @@
 <div class='container'>
 
 
-    <div class="row">
+    <div class="row backtest-form">
 
 
         <div class="col-sm-3">
-            <h1>IFR - {{cod_ativo_selecionado.cod_ativo}}</h1>
-            <label>Selecione a ação: 
+            <h1>IFR - {{carteira_simular.cod_ativo.cod_ativo}}</h1>
+            <!--<label>Selecione a ação: 
                 <select ng-change="simularAtivo(cod_ativo_selecionado)" ng-options="item as item.cod_ativo for item in lista_codigos_ativos track by item.cod_ativo" ng-model="cod_ativo_selecionado">
                 </select>
-            </label>
+            </label>-->
         </div>
+      
         <div class="col-sm-9">
-            <h2>Saldo inicial: {{ carteira_inicial.saldo | currency:NUMBER_FORMATS.CURRENCY_SYM }}</h2>
-            <h2>Saldo final: {{ carteira_final.saldo | currency:NUMBER_FORMATS.CURRENCY_SYM }}</h2>
+          
+          <!--
+          <h2>Saldo inicial: {{ carteira_inicial.saldo | currency:NUMBER_FORMATS.CURRENCY_SYM }}</h2>
+          -->
+          
+          <div class="input-group">
+            <select ng-options="item as item.cod_ativo for item in lista_codigos_ativos track by item.cod_ativo" ng-model="carteira_simular.cod_ativo">
+            </select>
+          </div>
+          
+          <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1">Periodo</span>
+            <input type="text" class="form-control" ng-model="carteira_simular.periodo" placeholder="0" aria-describedby="basic-addon1">
+          </div>
+
+          
+          <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1">Saldo simular</span>
+            <input type="text" class="form-control" ng-model="carteira_simular.saldo_inicial" placeholder="0" aria-describedby="basic-addon1">
+          </div>
+
+          <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1">Critério de compra</span>
+            <input type="text" class="form-control" ng-model="carteira_simular.criterio_compra" placeholder="0" aria-describedby="basic-addon1">
+          </div>
+          
+          <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1">Critério de venda</span>
+            <input type="text" class="form-control" ng-model="carteira_simular.criterio_venda" placeholder="0" aria-describedby="basic-addon1">
+          </div>
+
+          {{ carteira_simular }}
+          <button type="button" ng-click="simularAtivo(carteira_simular)" class="btn btn-success">Simular 1</button>
+          
+          <hr>
+          
+          <h2>Resultado: {{ carteira_final.saldo | currency:NUMBER_FORMATS.CURRENCY_SYM }}</h2>
+        
         </div>
 
     </div>
