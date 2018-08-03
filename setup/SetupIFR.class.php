@@ -13,16 +13,19 @@ class SetupIFR implements \app\setup\iSetup {
   private $criterio_venda;
   private $comprado = false;
   private $periodo;
+  private $dados;
+  private $resultado;
   
-  public function __construct($criterio_ifr_compra, $criterio_ifr_venda, $periodo = 2) {
-    $this->criterio_compra = $criterio_ifr_compra;
-    $this->criterio_venda = $criterio_ifr_venda;
-    $this->periodo = $periodo;
+  public function __construct(\app\model\Criterio $criterio, $dados) {
+    $this->criterio_compra = $criterio->getCriterio_compra();
+    $this->criterio_venda = $criterio->getCriterio_venda();
+    $this->periodo = $criterio->getPeriodo();
+    $this->dados = $dados;
   }
 
   public function avaliarvenda($preco) {
     if ($this->comprado) {
-      if ($preco["ifr"] > $this->criterio_venda){
+      if ($preco["ifr"] >= $this->criterio_venda){
         return true;
       }
     }
@@ -32,7 +35,7 @@ class SetupIFR implements \app\setup\iSetup {
 
   public function avaliarCompra($preco) {
     if (!$this->comprado) {
-      if ($preco["ifr"] < $this->criterio_compra && $preco["ifr"] > 0){
+      if ($preco["ifr"] <= $this->criterio_compra && $preco["ifr"] > 0){
         return true;
       }
     }
@@ -65,6 +68,19 @@ class SetupIFR implements \app\setup\iSetup {
 
   public function getPeriodo() {
     return $this->periodo;
+  }
+  
+  public function executar(){
+    
+    $periodo = $this->getPeriodo();
+    
+    $ifr = new \app\estudos\IFR($this->dados);
+    $ifr->calcula($periodo);
+
+    $this->resultado = $ifr->getResultado();
+    
+    return $this->resultado;
+
   }
 
 }

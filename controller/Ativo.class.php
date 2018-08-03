@@ -30,6 +30,8 @@ class Ativo extends \stphp\Controller {
     $periodo_ifr = $request->getParams("periodo");
     $mms1 = $request->getParams("mms1");
     
+    $criterio = new \app\model\Criterio($cod_ativo, $criterio_ifr_compra, $criterio_ifr_venda, $periodo_ifr, $saldo_inicio);
+
     if (empty($periodo_ifr)) {
       $periodo_ifr = 2;
     }
@@ -50,9 +52,15 @@ class Ativo extends \stphp\Controller {
     
     $carteira = new \app\model\Carteira($saldo_inicio);
 
-    $setup_ifr = new \app\setup\SetupIFR($criterio_ifr_compra, $criterio_ifr_compra, $periodo_ifr);
-    $simulador = new \app\simulador\Simulador($setup_ifr, $carteira, $mms1);
-    $simulador->backTest($dados);
+    $mms = new \app\estudos\MMS($dados, $mms1);
+    $mms->calcula();
+    $mms_calulados = $mms->getResultado();
+    
+    $setup_ifr = new \app\setup\SetupIFR($criterio, $mms_calulados);
+    $dados_ifr_calculados = $setup_ifr->executar();
+    
+    $simulador = new \app\simulador\Simulador($setup_ifr, $carteira);
+    $simulador->backTest($dados_ifr_calculados);
     $resultado = $simulador->getResultados();
 
     $carteira_inicial = $simulador->getCarteira_inicial();
